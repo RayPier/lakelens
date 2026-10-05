@@ -1,0 +1,274 @@
+<title>LakeLens</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@500;700;800&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
+<style>
+/* Layout: phone frame centered on a desktop "desk"; one-screen app with tab bar */
+:root{
+  --desk:#dfe6e4; --bg:#f4f7f6; --card:#ffffff; --fg:#13211f; --muted:#5d6f6b; --line:#d7e0dd;
+  --lake:#bfd9de; --land:#e8eee6; --accent:#0e6b74;
+  --good:#2f9e5b; --caution:#d9a21b; --high:#e0682b; --stay:#c8322f;
+  --display:"Bricolage Grotesque",ui-sans-serif,system-ui,sans-serif;
+  --body:"IBM Plex Sans",ui-sans-serif,system-ui,sans-serif;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --desk:#0b1312; --bg:#111c1b; --card:#182624; --fg:#e6efed; --muted:#93a8a3; --line:#2a3b38;
+  --lake:#1d4a52; --land:#16231f; --accent:#5cc3cc; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --desk:#0b1312; --bg:#111c1b; --card:#182624; --fg:#e6efed; --muted:#93a8a3; --line:#2a3b38;
+  --lake:#1d4a52; --land:#16231f; --accent:#5cc3cc; color-scheme:dark}
+html,body{height:100%}
+body{background:var(--desk);color:var(--fg);font-family:var(--body);display:flex;align-items:center;justify-content:center;padding-inline:16px}
+.phone{width:390px;max-width:100%;height:min(820px,calc(100% - 32px));background:var(--bg);border-radius:44px;border:10px solid #0d1615;box-shadow:0 30px 70px rgba(10,30,28,.35);overflow:hidden;display:flex;flex-direction:column;position:relative}
+@media (max-width:480px){body{padding-inline:0}.phone{border:0;border-radius:0;height:100%;width:100%;box-shadow:none}}
+.status{display:flex;justify-content:space-between;padding:12px 26px 4px;font-size:12px;font-weight:600;font-variant-numeric:tabular-nums}
+header{padding:4px 18px 10px}
+.brand{font-family:var(--display);font-weight:800;font-size:24px;letter-spacing:-.02em}
+.brand span{color:var(--accent)}
+.acts{display:flex;gap:6px;overflow-x:auto;margin-top:8px;scrollbar-width:none}
+.acts button{flex:0 0 auto;border:1px solid var(--line);background:var(--card);color:var(--fg);border-radius:999px;padding:7px 13px;font:500 13px var(--body);cursor:pointer}
+.acts button.on{background:var(--accent);border-color:var(--accent);color:var(--bg)}
+main{flex:1;overflow-y:auto;padding:0 16px 16px}
+.tabs{display:grid;grid-template-columns:repeat(4,1fr);border-top:1px solid var(--line);background:var(--card);padding-bottom:14px}
+.tabs button{background:none;border:0;color:var(--muted);font:500 11px var(--body);padding:10px 0 4px;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:3px}
+.tabs button.on{color:var(--accent)}
+.tabs svg{width:22px;height:22px}
+button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.map{background:var(--land);border-radius:18px;border:1px solid var(--line);overflow:hidden}
+.map svg{display:block;width:100%;height:auto}
+.list{display:flex;flex-direction:column;gap:8px;margin-top:12px}
+.row{display:flex;align-items:center;gap:12px;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:10px 12px;cursor:pointer;text-align:left;color:var(--fg);font:inherit;width:100%}
+.row .dot{width:12px;height:12px;border-radius:50%;flex:0 0 auto}
+.row .nm{font-weight:600}
+.row .why{font-size:12px;color:var(--muted);margin-top:2px}
+.row .sc{margin-left:auto;font-family:var(--display);font-weight:700;font-size:18px;font-variant-numeric:tabular-nums}
+.pill{display:inline-block;padding:3px 9px;border-radius:999px;font-size:11px;font-weight:600;color:#fff}
+.hero{border-radius:20px;padding:18px;color:#fff;margin-bottom:12px}
+.hero h2{font-family:var(--display);font-size:28px;margin:4px 0 6px;line-height:1.05;text-wrap:balance}
+.hero p{margin:0;font-size:14px;line-height:1.4}
+.hero small{opacity:.85;font-size:12px}
+.back{background:none;border:0;color:var(--accent);font:600 14px var(--body);padding:4px 0 10px;cursor:pointer}
+.card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:14px;margin-bottom:12px}
+.card h3{font-family:var(--display);font-size:16px;margin:0 0 10px}
+.comp{display:grid;grid-template-columns:96px 1fr 34px;gap:8px;align-items:center;font-size:13px;margin-bottom:9px}
+.comp .bar{height:8px;background:var(--line);border-radius:4px;overflow:hidden}
+.comp .bar i{display:block;height:100%;border-radius:4px}
+.comp .v{text-align:right;font-variant-numeric:tabular-nums;font-weight:600}
+.comp .sub{grid-column:1/-1;font-size:11px;color:var(--muted);margin-top:-6px}
+.note{font-size:11.5px;color:var(--muted);line-height:1.45}
+.btn{display:block;width:100%;border:0;border-radius:12px;padding:12px;font:600 14px var(--body);background:var(--accent);color:var(--bg);cursor:pointer;margin-top:8px}
+.btn.ghost{background:transparent;border:1px solid var(--line);color:var(--fg)}
+.shots{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.shot{border:1px solid var(--line);border-radius:12px;overflow:hidden;cursor:pointer;background:var(--card);padding:0;color:var(--fg);font:500 12px var(--body);text-align:left}
+.shot canvas{display:block;width:100%;height:80px}
+.shot span{display:block;padding:6px 8px}
+.ai{font-family:ui-monospace,Menlo,monospace;font-size:12px;background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:10px;white-space:pre-wrap;margin-top:10px}
+select{width:100%;padding:12px;font-weight:600;border-radius:10px;border:1px solid var(--line);background:var(--card);color:var(--fg);font:inherit;margin-bottom:10px}
+.check{display:flex;gap:10px;align-items:flex-start;padding:9px 0;border-bottom:1px solid var(--line);font-size:14px}
+.check:last-child{border-bottom:0}
+.check input{margin-top:3px;accent-color:var(--accent)}
+.toast{position:absolute;left:14px;right:14px;top:48px;background:var(--stay);color:#fff;border-radius:14px;padding:12px 14px;font-size:13px;box-shadow:0 10px 30px rgba(0,0,0,.25);transition:transform .3s;z-index:5}
+.toast b{display:block;font-size:14px}
+.demo{display:flex;gap:6px;flex-wrap:wrap;margin-top:10px}
+.demo button{flex:1;border:1px dashed var(--line);background:transparent;color:var(--muted);border-radius:10px;padding:8px;font:500 12px var(--body);cursor:pointer}
+.foot{font-size:11px;color:var(--muted);text-align:center;margin-top:12px}
+</style>
+
+<div class="phone">
+  <div class="status"><span id="clock">10:48</span><span>LTE ▮▮▮ 82%</span></div>
+  <div class="toast" id="toast" hidden></div>
+  <header>
+    <div class="brand">Lake<span>Lens</span></div>
+    <div class="acts" id="acts"></div>
+  </header>
+  <main id="main"></main>
+  <nav class="tabs" id="tabs"></nav>
+</div>
+
+<script>
+// ---------- config (thresholds + weights from the build plan) ----------
+const WACTS=["Swim","Boat","Paddle","Fish","Dog"]; // weight columns
+const ACTS=["Swim","Boat","Paddle","Dog"];
+const COMPS=["storms","wind","heat","algae","bacteria","cold","level","crowd"];
+const LABEL={storms:"Storms",wind:"Wind",heat:"Heat",algae:"Algae",bacteria:"Bacteria (est.)",cold:"Cold water",level:"Water level",crowd:"Crowding"};
+const W={ //   Swim Boat Paddle Fish Dog
+ storms:[1,1,1,1,1], wind:[.4,.8,1,.5,.3], heat:[.6,.6,.7,.7,.8], algae:[.9,.3,.5,.3,1],
+ bacteria:[1,.2,.5,.2,.6], cold:[.8,.4,.8,.2,.3], level:[.6,.6,.5,.4,.4], crowd:[.6,.8,.6,.3,.3]};
+const LEVELS=[[25,"Good","--good"],[50,"Use caution","--caution"],[75,"High risk","--high"],[101,"Stay out of the water","--stay"]];
+
+// ---------- sample live readings (example data, not real) ----------
+const ALL_LAKES=[
+ {id:"lew",name:"Lewisville",lat:33.07,lon:-97.0,wind:16,gust:22,hi:98,sat:"low",rain:0,ecoli:false,wt:76,lvl:.4,day:"weekend",ltg:null,warn:false,official:null},
+ {id:"grp",name:"Grapevine",lat:32.97,lon:-97.08,wind:21,gust:28,hi:96,sat:"low",rain:.1,ecoli:false,wt:75,lvl:-1.2,day:"weekend",ltg:null,warn:false,official:null},
+ {id:"rr",name:"Ray Roberts",lat:33.37,lon:-97.05,wind:9,gust:14,hi:94,sat:"low",rain:0,ecoli:false,wt:75,lvl:-.6,day:"weekend",ltg:null,warn:false,official:null},
+ {id:"lav",name:"Lavon",lat:33.05,lon:-96.48,wind:12,gust:18,hi:97,sat:"medium",rain:.6,ecoli:true,wt:77,lvl:-5.8,day:"weekend",ltg:null,warn:false,official:null},
+ {id:"jp",name:"Joe Pool",lat:32.62,lon:-97.0,wind:14,gust:20,hi:99,sat:"low",rain:1.2,ecoli:true,wt:77,lvl:.2,day:"weekend",ltg:null,warn:false,official:null},
+ {id:"ben",name:"Benbrook",lat:32.63,lon:-97.45,wind:7,gust:11,hi:95,sat:"low",rain:0,ecoli:false,wt:76,lvl:-2.1,day:"weekend",ltg:null,warn:false,official:null},
+ {id:"tex",name:"Texoma",lat:33.82,lon:-96.6,wind:18,gust:26,hi:93,sat:"high",rain:0,ecoli:false,wt:74,lvl:1.1,day:"weekend",ltg:null,warn:false,official:"advisory"},
+ {id:"rh",name:"Ray Hubbard",lat:32.85,lon:-96.52,wind:11,gust:16,hi:98,sat:"medium",rain:.3,ecoli:false,wt:77,lvl:-.9,day:"weekend",ltg:null,warn:false,official:null},
+ {id:"em",name:"Eagle Mountain",lat:32.9,lon:-97.47,wind:10,gust:15,hi:96,sat:"low",rain:0,ecoli:false,wt:76,lvl:-3.4,day:"weekend",ltg:null,warn:false,official:null},
+ {id:"lw",name:"Lake Worth",lat:32.8,lon:-97.42,wind:8,gust:12,hi:97,sat:"low",rain:0,ecoli:true,wt:77,lvl:.1,day:"weekend",ltg:18,warn:false,official:null}];
+const LAKES=ALL_LAKES.filter(L=>["rr","lew","grp","tex"].includes(L.id));
+const AGE={storms:1,wind:4,heat:4,algae:1140,bacteria:12,cold:15,level:15,crowd:9}; // minutes
+let reports=[]; // {lake, algae, water, crowd, sign, t}
+
+// ---------- scoring ----------
+function hazards(L){
+  const h={};
+  h.storms=(L.warn||(L.ltg!==null&&L.ltg<10))?100:(L.ltg!==null&&L.ltg<=20?60:0);
+  let w=L.wind<8?0:L.wind<=12?25:L.wind<=19?55:L.wind<=29?85:100; if(L.gust>=25)w=Math.min(100,w+10); h.wind=w;
+  h.heat=L.hi<90?0:L.hi<=102?30:L.hi<=124?65:100;
+  const r=recent(L.id);
+  const algaeRep=r.filter(x=>x.algae==="likely").length>=2?70:0;
+  h.algae=L.official==="warning"?100:L.official==="advisory"?60:Math.max({low:20,medium:50,high:80}[L.sat]||0,algaeRep);
+  let b=L.rain<.25?5:L.rain<1?30:L.rain<2?60:85; if(L.ecoli)b+=10; h.bacteria=b;
+  h.cold=L.wt>=70?0:L.wt>=60?35:70;
+  h.level=Math.abs(L.lvl)<=3?0:L.lvl>=10?90:L.lvl>3?60:L.lvl<=-5?40:0;
+  let c=L.day==="weekday"?0:L.day==="holiday"?60:30; if(r.filter(x=>x.crowd==="packed").length>=2)c+=20; h.crowd=Math.min(80,c);
+  return h;
+}
+function recent(id){const now=Date.now();return reports.filter(x=>x.lake===id&&now-x.t<2*3600e3)}
+function score(L,a){
+  const h=hazards(L), ai=WACTS.indexOf(a);
+  const wtd=COMPS.map(k=>({k,v:W[k][ai]*h[k],h:h[k]})).sort((x,y)=>y.v-x.v);
+  const top3=wtd.slice(0,3).reduce((s,x)=>s+x.v,0)/3;
+  let s=Math.round(.7*wtd[0].v+.3*top3);
+  const override=h.storms===100||L.official==="warning"||L.official==="closure";
+  if(override)s=100;
+  const lvl=LEVELS.find(x=>s<x[0]);
+  return {s,lvl,top:wtd[0].k,wtd,h,override};
+}
+function reason(L,k,a){
+  switch(k){
+   case"storms":return L.warn?"Severe storm warning covers the lake. Get off the water now.":L.ltg<10?`Lightning ${L.ltg} mi away. Get off the water and into a car or building.`:`Lightning ${L.ltg} mi away. Watch the sky and be ready to leave.`;
+   case"wind":return `Wind ${L.wind} mph, gusts ${L.gust}. ${a==="Paddle"?"Choppy for paddleboards; stay near shore.":a==="Boat"?"Rough chop in open water; life jackets on.":"Wear a life jacket and stay near shore."}`;
+   case"heat":return `Heat index ${L.hi}°F. Bring water and shade${a==="Dog"?"; watch your dog for overheating.":"."}`;
+   case"algae":return L.official?`Official algae ${L.official} in effect. ${a==="Dog"?"Keep dogs out of the water.":"Avoid swallowing water; rinse off after."}`:`Satellite algae level ${L.sat}. ${a==="Dog"?"Keep dogs out of green or scummy water.":"Avoid visibly green or scummy water."}`;
+   case"bacteria":return `${L.rain}" of rain in 72 h may raise bacteria (estimate). Avoid swallowing water; rinse off after.`;
+   case"cold":return `Water ${L.wt}°F. Cold-shock risk; wear a life jacket.`;
+   case"level":return L.lvl>0?`Lake ${L.lvl} ft above normal. Watch for debris and flooded areas.`:`Lake ${Math.abs(L.lvl)} ft low. Watch for stumps and shallow ramps.`;
+   case"crowd":return `Busy ${L.day}. Wear a life jacket if swimming from a boat; watch for boat traffic.`;
+  }
+}
+const col=v=>`var(${v})`;
+const ago=m=>m<60?`${m} min ago`:m<1440?`${Math.round(m/60)} h ago`:`${Math.round(m/1440)} d ago`;
+
+// ---------- state + render ----------
+let act="Swim", tab="map", sel="lew";
+const $=id=>document.getElementById(id);
+function renderActs(){$("acts").innerHTML=ACTS.map(a=>`<button class="${a===act?"on":""}" data-a="${a}">${{Swim:"🏊",Boat:"🚤",Paddle:"🛶",Fish:"🎣",Dog:"🐕"}[a]} ${a}</button>`).join("");}
+$("acts").onclick=e=>{const b=e.target.closest("button");if(b){act=b.dataset.a;render()}};
+const ICONS={map:'<path d="M9 4 3 6v14l6-2 6 2 6-2V4l-6 2-6-2Zm0 0v14m6-12v14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>',
+ report:'<path d="M4 8h3l2-3h6l2 3h3v11H4z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><circle cx="12" cy="13" r="3.5" fill="none" stroke="currentColor" stroke-width="1.8"/>',
+ go:'<path d="M5 12l4 4 10-10" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>',
+ about:'<circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M12 11v6m0-9.5v.5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>'};
+function renderTabs(){$("tabs").innerHTML=[["map","Lakes"],["report","Report"],["go","Before you go"],["about","About"]].map(([k,l])=>`<button class="${tab===k?"on":""}" data-t="${k}"><svg viewBox="0 0 24 24">${ICONS[k]}</svg>${l}</button>`).join("");}
+$("tabs").onclick=e=>{const b=e.target.closest("button");if(b){tab=b.dataset.t;render()}};
+
+function viewMap(){
+  const X=lon=>(lon+97.62)/1.3*340+10, Y=lat=>(33.98-lat)/1.5*330+10;
+  const rows=LAKES.map(L=>({L,r:score(L,act)})).sort((a,b)=>b.r.s-a.r.s);
+  const pins=rows.map(({L,r})=>`<g style="cursor:pointer" data-l="${L.id}"><circle cx="${X(L.lon)}" cy="${Y(L.lat)}" r="16" fill="${col(r.lvl[2])}" opacity=".22"/><circle cx="${X(L.lon)}" cy="${Y(L.lat)}" r="8" fill="${col(r.lvl[2])}" stroke="var(--card)" stroke-width="2"/><text x="${X(L.lon)}" y="${Y(L.lat)-13}" text-anchor="middle" font-size="10.5" font-weight="600" fill="var(--fg)">${L.name}</text></g>`).join("");
+  return `<div class="map"><svg viewBox="0 0 360 350" id="mapsvg">
+    <path d="M10 190 C80 170 140 210 200 195 S320 180 350 200" fill="none" stroke="var(--line)" stroke-width="5"/>
+    <path d="M170 10 C175 90 160 200 175 340" fill="none" stroke="var(--line)" stroke-width="5"/>
+    <text x="300" y="232" font-size="10" fill="var(--muted)">Dallas</text><text x="62" y="232" font-size="10" fill="var(--muted)">Fort Worth</text>
+    ${pins}</svg></div>
+    <div class="list">${rows.map(({L,r})=>`<button class="row" data-l="${L.id}"><span class="dot" style="background:${col(r.lvl[2])}"></span><span><div class="nm">${L.name}</div><div class="why">${r.lvl[1]} · ${LABEL[r.top]}</div></span><span class="sc">${r.s}</span></button>`).join("")}</div>
+    <div class="demo"><button id="storm">⚡ Replay storm at Grapevine</button><button id="reset">Reset demo</button></div>
+    <p class="foot">Example readings for the prototype. Always wear a life jacket. Follow posted signs and official advisories.</p>`;
+}
+function ring(r){
+  const C=2*Math.PI*62, f=Math.max(.02,r.s/100);
+  return `<svg viewBox="0 0 160 160" width="168" height="168" role="img" aria-label="Risk score ${r.s} of 100">
+   <circle cx="80" cy="80" r="62" fill="none" stroke="var(--line)" stroke-width="14"/>
+   <circle cx="80" cy="80" r="62" fill="none" stroke="${col(r.lvl[2])}" stroke-width="14" stroke-linecap="round"
+     stroke-dasharray="${C*f} ${C}" transform="rotate(-90 80 80)" style="transition:stroke-dasharray .5s"/>
+   <text x="80" y="88" text-anchor="middle" font-family="Bricolage Grotesque,system-ui" font-size="44" font-weight="800" fill="var(--fg)">${r.s}</text>
+   <text x="80" y="108" text-anchor="middle" font-size="11" fill="var(--muted)">out of 100</text></svg>`;
+}
+function viewLake(){
+  const L=LAKES.find(x=>x.id===sel)||LAKES[0], r=score(L,act), ai=WACTS.indexOf(act);
+  const others=ACTS.map(a=>{const x=score(L,a);return `<span class="pill" style="background:${col(x.lvl[2])}">${a} ${x.s}</span>`}).join(" ");
+  const rep=recent(L.id);
+  const top3=r.wtd.slice(0,3);
+  return `<select id="hlake" aria-label="Lake">${LAKES.map(x=>`<option value="${x.id}" ${x.id===L.id?"selected":""}>${x.name} Lake</option>`).join("")}</select>
+   <div class="card" style="text-align:center">
+     ${ring(r)}
+     <div><span class="pill" style="background:${col(r.lvl[2])};font-size:13px;padding:5px 12px">${r.lvl[1]}</span></div>
+     <p style="margin:10px 0 0;font-size:14px;line-height:1.4">${reason(L,r.top,act)}</p>
+     <p class="note" style="margin:6px 0 0">${act} at ${L.name}${r.override?" · override applied":""}</p>
+   </div>
+   <div class="card"><h3>How the score is calculated</h3>
+     <div class="ai" style="margin-top:0">${r.override?"Override: "+(r.h.storms===100?"lightning / storm warning":"official algae warning")+" → 100":`0.7 × max + 0.3 × mean(top 3)
+= 0.7 × ${top3[0].v.toFixed(1)} + 0.3 × ${((top3[0].v+top3[1].v+top3[2].v)/3).toFixed(1)}
+= ${r.s}`}</div>
+     <div style="margin-top:12px">${COMPS.map(k=>{const v=Math.round(W[k][ai]*r.h[k]);const c=r.h[k]>=75?"--stay":r.h[k]>=50?"--high":r.h[k]>=25?"--caution":"--good";return `<div class="comp"><span>${LABEL[k]}</span><span class="bar"><i style="width:${r.h[k]}%;background:${col(c)}"></i></span><span class="v">${v}</span><span class="sub">hazard ${r.h[k]} × weight ${W[k][ai]} · updated ${ago(AGE[k])}</span></div>`}).join("")}</div>
+     <p class="note">Satellite algae is provisional EPA data; bacteria is an estimate from recent rain.</p></div>
+   <div class="card"><h3>Same lake, other activities</h3><div style="display:flex;flex-wrap:wrap;gap:6px">${others}</div></div>
+   <div class="card"><h3>Community reports (last 2 h)</h3>${rep.length?rep.map(x=>`<div class="note">• algae ${x.algae}, water ${x.water}, crowd ${x.crowd} · ${ago(Math.max(0,Math.round((Date.now()-x.t)/60000)))}</div>`).join("")+(rep.length<2?'<p class="note">Unconfirmed: needs a second matching report to change the score.</p>':""):'<p class="note">No reports yet.</p>'}
+   <button class="btn ghost" id="toReport">Report conditions here</button></div>
+   <div class="demo"><button id="storm">⚡ Replay storm at Grapevine</button><button id="reset">Reset demo</button></div>
+   <p class="foot">Example readings for the prototype. Always wear a life jacket. Follow posted signs and official advisories.</p>`;
+}
+// fake "photos" drawn on canvas
+const SHOTS=[
+ {k:"algae",label:"Green scum near shore",out:{algae:"likely",water:"calm",crowd:"empty",sign:"none",confidence:.91},paint:(g,w,h)=>{g.fillStyle="#5e8f3a";g.fillRect(0,0,w,h);for(let i=0;i<60;i++){g.fillStyle=`rgba(${120+Math.random()*60},${180+Math.random()*50},60,.6)`;g.beginPath();g.arc(Math.random()*w,Math.random()*h,4+Math.random()*10,0,7);g.fill()}}},
+ {k:"rough",label:"Whitecaps on open water",out:{algae:"none",water:"rough",crowd:"empty",sign:"none",confidence:.87},paint:(g,w,h)=>{g.fillStyle="#3c6f86";g.fillRect(0,0,w,h);g.strokeStyle="#e9f3f6";g.lineWidth=2;for(let i=0;i<14;i++){const y=Math.random()*h,x=Math.random()*w;g.beginPath();g.moveTo(x,y);g.quadraticCurveTo(x+8,y-6,x+18,y);g.stroke()}}},
+ {k:"crowd",label:"Packed swim beach",out:{algae:"none",water:"calm",crowd:"packed",sign:"none",confidence:.84},paint:(g,w,h)=>{g.fillStyle="#7fb4c8";g.fillRect(0,0,w,h*.45);g.fillStyle="#e3cf9a";g.fillRect(0,h*.45,w,h);const cs=["#e05a4f","#f2b632","#3a7bd5","#fff","#7a4fd1"];for(let i=0;i<45;i++){g.fillStyle=cs[i%5];g.fillRect(Math.random()*w,h*.35+Math.random()*h*.6,4,6)}}},
+ {k:"clear",label:"Calm, clear water",out:{algae:"none",water:"calm",crowd:"moderate",sign:"none",confidence:.9},paint:(g,w,h)=>{const gr=g.createLinearGradient(0,0,0,h);gr.addColorStop(0,"#9fd0e6");gr.addColorStop(1,"#2f7f9e");g.fillStyle=gr;g.fillRect(0,0,w,h)}}];
+let lastLabel=null;
+function viewReport(){
+  return `<div class="card"><h3>Report conditions</h3>
+   <select id="rlake">${LAKES.map(L=>`<option value="${L.id}" ${L.id===(sel||"lew")?"selected":""}>${L.name}</option>`).join("")}</select>
+   <p class="note" style="margin-top:0">Prototype: tap a sample photo to simulate the in-app camera. The vision model returns fixed labels.</p>
+   <div class="shots">${SHOTS.map((s,i)=>`<button class="shot" data-s="${i}"><canvas width="160" height="80"></canvas><span>${s.label}</span></button>`).join("")}</div>
+   ${lastLabel?`<div class="ai">AI read this photo:\n${JSON.stringify(lastLabel.out,null,1)}\n\n${lastLabel.msg}</div>`:""}
+   </div>
+   <div class="card"><h3>How busy is it?</h3><div class="demo" style="margin:0">${["empty","moderate","packed"].map(c=>`<button data-busy="${c}">${c[0].toUpperCase()+c.slice(1)}</button>`).join("")}</div></div>
+   <p class="note">Reports show as community reports and expire after 6 hours. Two matching reports within 2 hours change a lake's score. Only labels and a blurred thumbnail are kept.</p>`;
+}
+function addReport(lake,o){
+  const before=score(LAKES.find(x=>x.id===lake),act).s;
+  reports.push({lake,...o,t:Date.now()});
+  const L=LAKES.find(x=>x.id===lake), after=score(L,act).s;
+  const n=recent(lake).filter(x=>(o.algae==="likely"&&x.algae==="likely")||(o.crowd==="packed"&&x.crowd==="packed")).length;
+  return n>=2?`Confirmed by ${n} reports. ${L.name} (${act}) score ${before} → ${after}.`:`Saved as unconfirmed for ${L.name}. One more matching report will update the score.`;
+}
+function viewGo(){
+  const L=LAKES.find(x=>x.id===(sel||"lew")), r=score(L,act), h=r.h;
+  const items=["Everyone wears a life jacket, including strong swimmers"];
+  if(h.storms>=60)items.unshift("Lightning nearby: stay off the water until 30 min after the last strike");
+  if(h.wind>=55)items.push(`Wind ${L.wind} mph: stay near shore${act==="Paddle"?", kneel on the board in chop":""}`);
+  if(h.algae>=50)items.push(act==="Dog"?"Keep your dog out of the water; bring fresh water for it":"Skip green or scummy water; don't swallow lake water");
+  if(h.bacteria>=30&&(act==="Swim"||act==="Dog"))items.push("Rinse off after swimming (recent rain raises bacteria)");
+  if(h.heat>=30)items.push(`Heat index ${L.hi}°F: bring water and shade`);
+  if(h.level>=40)items.push(L.lvl<0?"Low water: watch for stumps and shallow ramps":"High water: watch for floating debris");
+  if(act==="Boat")items.push("No alcohol for whoever is driving the boat");
+  if(act==="Swim")items.push("Swim only in designated areas, never from an anchored boat in open water");
+  return `<div class="card"><h3>Before you go</h3><select id="glake">${LAKES.map(x=>`<option value="${x.id}" ${x.id===L.id?"selected":""}>${x.name}</option>`).join("")}</select>
+   <div class="hero" style="background:${col(r.lvl[2])};margin:0 0 8px;padding:12px"><small>${act} today</small><h2 style="font-size:20px;margin:2px 0 0">${r.lvl[1]}</h2></div>
+   ${items.map((t,i)=>`<label class="check"><input type="checkbox" id="c${i}"> <span>${t}</span></label>`).join("")}</div>`;
+}
+function viewAbout(){return `<div class="card"><h3>About LakeLens</h3><p class="note" style="font-size:13px">LakeLens rates current conditions at 10 North Texas lakes for the activity you pick. It never says a lake is safe. Each rating combines eight live readings (storms, wind, heat, algae, bacteria estimate, water temperature, water level and crowding) with photo reports checked by a vision model.</p><p class="note">This prototype uses example readings. Sources in the full build: NWS alerts, NOAA GOES lightning, TexMesonet, USACE CWMS and USGS lake levels, EPA CyAN satellite algae, Water Quality Portal E. coli history.</p></div>`}
+
+function draw(){document.querySelectorAll(".shot canvas").forEach((c,i)=>SHOTS[i].paint(c.getContext("2d"),c.width,c.height))}
+function render(){
+  renderActs();renderTabs();
+  $("main").innerHTML=tab==="map"?viewLake():tab==="report"?viewReport():tab==="go"?viewGo():viewAbout();
+  if(tab==="report")draw();
+  $("main").scrollTop=0;
+}
+$("main").onclick=e=>{
+  const t=e.target;
+  const l=t.closest("[data-l]"); if(l){sel=l.dataset.l;render();return}
+  
+  if(t.closest("#toReport")){tab="report";render();return}
+  const s=t.closest("[data-s]"); if(s){const sh=SHOTS[+s.dataset.s];const lake=$("rlake").value;lastLabel={out:sh.out,msg:addReport(lake,sh.out)};render();return}
+  const b=t.closest("[data-busy]"); if(b){const lake=$("rlake").value;lastLabel={out:{crowd:b.dataset.busy,source:"one-tap"},msg:addReport(lake,{algae:"none",water:"calm",crowd:b.dataset.busy,sign:"none"})};render();return}
+  if(t.closest("#storm")){const G=LAKES.find(x=>x.id==="grp");G.ltg=8;AGE.storms=0;sel="grp";render();toast(`<b>Grapevine: Stay out of the water</b>Lightning 8 mi away just now. Get off the water.`);return}
+  if(t.closest("#reset")){LAKES.find(x=>x.id==="grp").ltg=null;reports=[];lastLabel=null;render();return}
+};
+$("main").onchange=e=>{if(e.target.id==="glake"||e.target.id==="hlake"){sel=e.target.value;render()}};
+function toast(h){const el=$("toast");el.innerHTML=h;el.hidden=false;clearTimeout(toast.t);toast.t=setTimeout(()=>el.hidden=true,4500)}
+setInterval(()=>{const d=new Date();$("clock").textContent=d.toLocaleTimeString([], {hour:"numeric",minute:"2-digit"})},10000);
+render();
+</script>
