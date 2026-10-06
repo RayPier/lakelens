@@ -1,3 +1,8 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <title>LakeLens</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@500;700;800&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
 <style>
@@ -15,7 +20,8 @@
 :root[data-theme="dark"]{
   --desk:#0b1312; --bg:#111c1b; --card:#182624; --fg:#e6efed; --muted:#93a8a3; --line:#2a3b38;
   --lake:#1d4a52; --land:#16231f; --accent:#5cc3cc; color-scheme:dark}
-html,body{height:100%}
+html,body{height:100%;margin:0}
+*,*::before,*::after{box-sizing:border-box}
 body{background:var(--desk);color:var(--fg);font-family:var(--body);display:flex;align-items:center;justify-content:center;padding-inline:16px}
 .phone{width:390px;max-width:100%;height:min(820px,calc(100% - 32px));background:var(--bg);border-radius:44px;border:10px solid #0d1615;box-shadow:0 30px 70px rgba(10,30,28,.35);overflow:hidden;display:flex;flex-direction:column;position:relative}
 @media (max-width:480px){body{padding-inline:0}.phone{border:0;border-radius:0;height:100%;width:100%;box-shadow:none}}
@@ -69,8 +75,18 @@ select{width:100%;padding:12px;font-weight:600;border-radius:10px;border:1px sol
 .toast b{display:block;font-size:14px}
 .demo{display:flex;gap:6px;flex-wrap:wrap;margin-top:10px}
 .demo button{flex:1;border:1px dashed var(--line);background:transparent;color:var(--muted);border-radius:10px;padding:8px;font:500 12px var(--body);cursor:pointer}
+.tabs[hidden]{display:none}
+.how{background:none;border:0;color:var(--accent);font:500 12.5px var(--body);text-decoration:underline;text-underline-offset:3px;cursor:pointer;margin-top:8px;padding:4px}
+.scrim{position:absolute;inset:0;background:rgba(5,15,14,.45);z-index:6;display:flex;align-items:flex-end}
+.scrim[hidden]{display:none}
+.pop{background:var(--card);width:100%;max-height:85%;overflow-y:auto;border-radius:22px 22px 0 0;padding:16px 16px 24px;box-shadow:0 -10px 30px rgba(0,0,0,.2)}
+.pop-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:4px}
+.pop-head h3{font-family:var(--display);font-size:17px;margin:0}
+.x{background:var(--bg);border:1px solid var(--line);color:var(--fg);width:32px;height:32px;border-radius:50%;cursor:pointer;font-size:14px}
 .foot{font-size:11px;color:var(--muted);text-align:center;margin-top:12px}
 </style>
+</head>
+<body>
 
 <div class="phone">
   <div class="status"><span id="clock">10:48</span><span>LTE ▮▮▮ 82%</span></div>
@@ -80,7 +96,8 @@ select{width:100%;padding:12px;font-weight:600;border-radius:10px;border:1px sol
     <div class="acts" id="acts"></div>
   </header>
   <main id="main"></main>
-  <nav class="tabs" id="tabs"></nav>
+  <nav class="tabs" id="tabs" hidden></nav><!-- Report / Before you go / About hidden for now -->
+  <div class="scrim" id="scrim" hidden><div class="pop" id="pop" role="dialog" aria-modal="true" aria-label="How the score is calculated"></div></div>
 </div>
 
 <script>
@@ -109,6 +126,7 @@ const ALL_LAKES=[
 const LAKES=ALL_LAKES.filter(L=>["rr","lew","grp","tex"].includes(L.id));
 const AGE={storms:1,wind:4,heat:4,algae:1140,bacteria:12,cold:15,level:15,crowd:9}; // minutes
 let reports=[]; // {lake, algae, water, crowd, sign, t}
+let LIVE={ltg:null}; // real data loaded from lakelens-data/processed/*.json
 
 // ---------- scoring ----------
 function hazards(L){
@@ -174,7 +192,7 @@ function viewMap(){
     ${pins}</svg></div>
     <div class="list">${rows.map(({L,r})=>`<button class="row" data-l="${L.id}"><span class="dot" style="background:${col(r.lvl[2])}"></span><span><div class="nm">${L.name}</div><div class="why">${r.lvl[1]} · ${LABEL[r.top]}</div></span><span class="sc">${r.s}</span></button>`).join("")}</div>
     <div class="demo"><button id="storm">⚡ Replay storm at Grapevine</button><button id="reset">Reset demo</button></div>
-    <p class="foot">Example readings for the prototype. Always wear a life jacket. Follow posted signs and official advisories.</p>`;
+    <p class="foot">${LIVE.ltg?`Lightning: NOAA GOES-19, updated ${ago(AGE.storms)}${AGE.storms>75?" (out of date; check the sky and local alerts)":""}. Other readings are examples.`:"Example readings for the prototype."} Always wear a life jacket. Follow posted signs and official advisories.</p>`;
 }
 function ring(r){
   const C=2*Math.PI*62, f=Math.max(.02,r.s/100);
@@ -186,29 +204,32 @@ function ring(r){
    <text x="80" y="108" text-anchor="middle" font-size="11" fill="var(--muted)">out of 100</text></svg>`;
 }
 function viewLake(){
-  const L=LAKES.find(x=>x.id===sel)||LAKES[0], r=score(L,act), ai=WACTS.indexOf(act);
-  const others=ACTS.map(a=>{const x=score(L,a);return `<span class="pill" style="background:${col(x.lvl[2])}">${a} ${x.s}</span>`}).join(" ");
+  const L=LAKES.find(x=>x.id===sel)||LAKES[0], r=score(L,act);
   const rep=recent(L.id);
-  const top3=r.wtd.slice(0,3);
   return `<select id="hlake" aria-label="Lake">${LAKES.map(x=>`<option value="${x.id}" ${x.id===L.id?"selected":""}>${x.name} Lake</option>`).join("")}</select>
    <div class="card" style="text-align:center">
      ${ring(r)}
      <div><span class="pill" style="background:${col(r.lvl[2])};font-size:13px;padding:5px 12px">${r.lvl[1]}</span></div>
      <p style="margin:10px 0 0;font-size:14px;line-height:1.4">${reason(L,r.top,act)}</p>
      <p class="note" style="margin:6px 0 0">${act} at ${L.name}${r.override?" · override applied":""}</p>
+     <button class="how" id="how">How is the score calculated?</button>
    </div>
-   <div class="card"><h3>How the score is calculated</h3>
-     <div class="ai" style="margin-top:0">${r.override?"Override: "+(r.h.storms===100?"lightning / storm warning":"official algae warning")+" → 100":`0.7 × max + 0.3 × mean(top 3)
-= 0.7 × ${top3[0].v.toFixed(1)} + 0.3 × ${((top3[0].v+top3[1].v+top3[2].v)/3).toFixed(1)}
-= ${r.s}`}</div>
-     <div style="margin-top:12px">${COMPS.map(k=>{const v=Math.round(W[k][ai]*r.h[k]);const c=r.h[k]>=75?"--stay":r.h[k]>=50?"--high":r.h[k]>=25?"--caution":"--good";return `<div class="comp"><span>${LABEL[k]}</span><span class="bar"><i style="width:${r.h[k]}%;background:${col(c)}"></i></span><span class="v">${v}</span><span class="sub">hazard ${r.h[k]} × weight ${W[k][ai]} · updated ${ago(AGE[k])}</span></div>`}).join("")}</div>
-     <p class="note">Satellite algae is provisional EPA data; bacteria is an estimate from recent rain.</p></div>
-   <div class="card"><h3>Same lake, other activities</h3><div style="display:flex;flex-wrap:wrap;gap:6px">${others}</div></div>
-   <div class="card"><h3>Community reports (last 2 h)</h3>${rep.length?rep.map(x=>`<div class="note">• algae ${x.algae}, water ${x.water}, crowd ${x.crowd} · ${ago(Math.max(0,Math.round((Date.now()-x.t)/60000)))}</div>`).join("")+(rep.length<2?'<p class="note">Unconfirmed: needs a second matching report to change the score.</p>':""):'<p class="note">No reports yet.</p>'}
-   <button class="btn ghost" id="toReport">Report conditions here</button></div>
+   <div class="card"><h3>Community reports (last 2 h)</h3>${rep.length?rep.map(x=>`<div class="note">• algae ${x.algae}, water ${x.water}, crowd ${x.crowd} · ${ago(Math.max(0,Math.round((Date.now()-x.t)/60000)))}</div>`).join("")+(rep.length<2?'<p class="note">Unconfirmed: needs a second matching report to change the score.</p>':""):'<p class="note">No reports yet.</p>'}</div>
    <div class="demo"><button id="storm">⚡ Replay storm at Grapevine</button><button id="reset">Reset demo</button></div>
    <p class="foot">Example readings for the prototype. Always wear a life jacket. Follow posted signs and official advisories.</p>`;
 }
+function viewHow(){
+  const L=LAKES.find(x=>x.id===sel)||LAKES[0], r=score(L,act), ai=WACTS.indexOf(act), top3=r.wtd.slice(0,3);
+  return `<div class="pop-head"><h3>How the score is calculated</h3><button class="x" id="howClose" aria-label="Close">✕</button></div>
+   <p class="note" style="margin:0 0 10px">${act} at ${L.name}</p>
+   <div class="ai" style="margin-top:0">${r.override?"Override: "+(r.h.storms===100?"lightning / storm warning":"official algae warning")+" → 100":`0.7 × max + 0.3 × mean(top 3)
+= 0.7 × ${top3[0].v.toFixed(1)} + 0.3 × ${((top3[0].v+top3[1].v+top3[2].v)/3).toFixed(1)}
+= ${r.s}`}</div>
+   <div style="margin-top:12px">${COMPS.map(k=>{const v=Math.round(W[k][ai]*r.h[k]);const c=r.h[k]>=75?"--stay":r.h[k]>=50?"--high":r.h[k]>=25?"--caution":"--good";return `<div class="comp"><span>${LABEL[k]}</span><span class="bar"><i style="width:${r.h[k]}%;background:${col(c)}"></i></span><span class="v">${v}</span><span class="sub">hazard ${r.h[k]} × weight ${W[k][ai]} · updated ${ago(AGE[k])}</span></div>`}).join("")}</div>
+   <p class="note" style="margin-bottom:0">Satellite algae is provisional EPA data; bacteria is an estimate from recent rain.</p>`;
+}
+function openHow(){$("pop").innerHTML=viewHow();$("scrim").hidden=false;$("howClose").focus()}
+function closeHow(){if($("scrim").hidden)return;$("scrim").hidden=true;$("how")?.focus()}
 // fake "photos" drawn on canvas
 const SHOTS=[
  {k:"algae",label:"Green scum near shore",out:{algae:"likely",water:"calm",crowd:"empty",sign:"none",confidence:.91},paint:(g,w,h)=>{g.fillStyle="#5e8f3a";g.fillRect(0,0,w,h);for(let i=0;i<60;i++){g.fillStyle=`rgba(${120+Math.random()*60},${180+Math.random()*50},60,.6)`;g.beginPath();g.arc(Math.random()*w,Math.random()*h,4+Math.random()*10,0,7);g.fill()}}},
@@ -261,14 +282,29 @@ $("main").onclick=e=>{
   const t=e.target;
   const l=t.closest("[data-l]"); if(l){sel=l.dataset.l;render();return}
   
-  if(t.closest("#toReport")){tab="report";render();return}
+  if(t.closest("#how")){openHow();return}
   const s=t.closest("[data-s]"); if(s){const sh=SHOTS[+s.dataset.s];const lake=$("rlake").value;lastLabel={out:sh.out,msg:addReport(lake,sh.out)};render();return}
   const b=t.closest("[data-busy]"); if(b){const lake=$("rlake").value;lastLabel={out:{crowd:b.dataset.busy,source:"one-tap"},msg:addReport(lake,{algae:"none",water:"calm",crowd:b.dataset.busy,sign:"none"})};render();return}
   if(t.closest("#storm")){const G=LAKES.find(x=>x.id==="grp");G.ltg=8;AGE.storms=0;sel="grp";render();toast(`<b>Grapevine: Stay out of the water</b>Lightning 8 mi away just now. Get off the water.`);return}
-  if(t.closest("#reset")){LAKES.find(x=>x.id==="grp").ltg=null;reports=[];lastLabel=null;render();return}
+  if(t.closest("#reset")){LAKES.find(x=>x.id==="grp").ltg=null;applyLightning();reports=[];lastLabel=null;render();return}
 };
 $("main").onchange=e=>{if(e.target.id==="glake"||e.target.id==="hlake"){sel=e.target.value;render()}};
+$("scrim").onclick=e=>{if(e.target.id==="scrim"||e.target.closest("#howClose"))closeHow()};
+document.addEventListener("keydown",e=>{if(e.key==="Escape")closeHow()});
 function toast(h){const el=$("toast");el.innerHTML=h;el.hidden=false;clearTimeout(toast.t);toast.t=setTimeout(()=>el.hidden=true,4500)}
 setInterval(()=>{const d=new Date();$("clock").textContent=d.toLocaleTimeString([], {hour:"numeric",minute:"2-digit"})},10000);
+// ---------- live data ----------
+// Lightning: GOES-19 GLM flashes in the last 30 min, written by lakelens-data/scripts/fetch_lightning.py
+function applyLightning(){
+  const d=LIVE.ltg; if(!d)return;
+  ALL_LAKES.forEach(L=>{const x=d.lakes[L.id]; if(x)L.ltg=x.nearest_mi});
+  AGE.storms=Math.max(0,Math.round((Date.now()-Date.parse(d.generated))/60000));
+}
+fetch("lakelens-data/processed/lightning.json",{cache:"no-store"})
+  .then(r=>r.ok?r.json():Promise.reject(r.status))
+  .then(d=>{LIVE.ltg=d;applyLightning();render()})
+  .catch(e=>console.warn("Lightning data unavailable, using example readings:",e));
 render();
 </script>
+</body>
+</html>

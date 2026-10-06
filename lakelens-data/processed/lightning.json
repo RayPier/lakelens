@@ -1,0 +1,89 @@
+{
+  "source": "NOAA GOES-19 GLM GLM-L2-LCFA (s3://noaa-goes19)",
+  "generated": "2026-10-06T02:52:03+00:00",
+  "window_min": 30,
+  "files": 89,
+  "latest_file_start": "2026-10-06T02:51:20+00:00",
+  "lakes": {
+    "lew": {
+      "name": "Lewisville",
+      "nearest_mi": null,
+      "nearest_min_ago": null,
+      "last_within_10mi_min_ago": null,
+      "count_10mi": 0,
+      "count_20mi": 0
+    },
+    "grp": {
+      "name": "Grapevine",
+      "nearest_mi": null,
+      "nearest_min_ago": null,
+      "last_within_10mi_min_ago": null,
+      "count_10mi": 0,
+      "count_20mi": 0
+    },
+    "rr": {
+      "name": "Ray Roberts",
+      "nearest_mi": null,
+      "nearest_min_ago": null,
+      "last_within_10mi_min_ago": null,
+      "count_10mi": 0,
+      "count_20mi": 0
+    },
+    "lav": {
+      "name": "Lavon",
+      "nearest_mi": null,
+      "nearest_min_ago": null,
+      "last_within_10mi_min_ago": null,
+      "count_10mi": 0,
+      "count_20mi": 0
+    },
+    "jp": {
+      "name": "Joe Pool",
+      "nearest_mi": null,
+      "nearest_min_ago": null,
+      "last_within_10mi_min_ago": null,
+      "count_10mi": 0,
+      "count_20mi": 0
+    },
+    "ben": {
+      "name": "Benbrook",
+      "nearest_mi": null,
+      "nearest_min_ago": null,
+      "last_within_10mi_min_ago": null,
+      "count_10mi": 0,
+      "count_20mi": 0
+    },
+    "tex": {
+      "name": "Texoma",
+      "nearest_mi": null,
+      "nearest_min_ago": null,
+      "last_within_10mi_min_ago": null,
+      "count_10mi": 0,
+      "count_20mi": 0
+    },
+    "rh": {
+      "name": "Ray Hubbard",
+      "nearest_mi": null,
+      "nearest_min_ago": null,
+      "last_within_10mi_min_ago": null,
+      "count_10mi": 0,
+      "count_20mi": 0
+    },
+    "em": {
+      "name": "Eagle Mountain",
+      "nearest_mi": null,
+      "nearest_min_ago": null,
+      "last_within_10mi_min_ago": null,
+      "count_10mi": 0,
+      "count_20mi": 0
+    },
+    "lw": {
+      "name": "Lake Worth",
+      "nearest_mi": null,
+      "nearest_min_ago": null,
+      "last_within_10mi_min_ago": null,
+      "count_10mi": 0,
+      "count_20mi": 0
+    }
+  }
+}

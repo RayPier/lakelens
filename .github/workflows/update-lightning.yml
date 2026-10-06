@@ -1,0 +1,43 @@
+name: Update lightning data
+
+# Refreshes lakelens-data/processed/lightning.json from NOAA GOES-19 GLM.
+# Hourly for now to stay well inside the private-repo free tier (2,000 Actions min/month,
+# each run billed as >= 1 min). GitHub may delay scheduled runs under load.
+on:
+  schedule:
+    - cron: "7 * * * *"  # :07 past each hour; the top of the hour is when GitHub's scheduler is busiest
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: update-lightning
+  cancel-in-progress: false
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+          cache-dependency-path: lakelens-data/requirements.txt
+
+      - run: pip install -r lakelens-data/requirements.txt
+
+      - run: python lakelens-data/scripts/fetch_lightning.py
+
+      - name: Commit updated data
+        run: |
+          git config user.name "lakelens-bot"
+          git config user.email "lakelens-bot@users.noreply.github.com"
+          git add lakelens-data/processed/lightning.json
+          git diff --cached --quiet && exit 0
+          git commit -m "Update lightning data $(date -u +%Y-%m-%dT%H:%MZ)"
+          git pull --rebase origin main
+          git push
