@@ -83,17 +83,16 @@ select{width:100%;padding:12px;font-weight:600;border-radius:10px;border:1px sol
 .pop-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:4px}
 .pop-head h3{font-family:var(--display);font-size:17px;margin:0}
 .x{background:var(--bg);border:1px solid var(--line);color:var(--fg);width:32px;height:32px;border-radius:50%;cursor:pointer;font-size:14px}
-.alerts{position:absolute;left:14px;right:14px;top:48px;z-index:4;display:flex;flex-direction:column;gap:8px;max-height:60%;overflow-y:auto}
+.alerts{display:flex;flex-direction:column;gap:6px;padding:0 16px 10px}
 .alerts:empty{display:none}
-.alert{position:relative;background:var(--stay);color:#fff;border-radius:14px;padding:12px 46px 12px 14px;font-size:13px;line-height:1.4;box-shadow:0 10px 30px rgba(0,0,0,.25)}
-.alert.severe{background:var(--high)}
-.alert b{display:block;font-size:14px}
-.alert small{display:block;opacity:.9;margin-top:4px;font-size:11.5px}
-.alert details{margin-top:6px}
-.alert summary{cursor:pointer;font-weight:600;font-size:12px}
-.alert details p{white-space:pre-wrap;max-height:180px;overflow-y:auto;margin:6px 0 0;font-size:12px}
-.alert .ax{position:absolute;top:8px;right:8px;width:30px;height:30px;border-radius:50%;border:0;background:rgba(255,255,255,.22);color:#fff;font-size:14px;cursor:pointer}
-.alert .ax:focus-visible{outline:2px solid #fff}
+.alert{display:flex;align-items:center;gap:8px;background:var(--stay);color:#fff;border-radius:10px;padding:6px 6px 6px 10px;font-size:12.5px;line-height:1.3}
+.alert .at{flex:1;min-width:0}
+.alert b{font-weight:600}
+.alert small{opacity:.9;font-size:11.5px;white-space:nowrap}
+.alert button{border:0;color:#fff;background:rgba(255,255,255,.22);cursor:pointer;flex:0 0 auto}
+.alert .ad{border-radius:999px;padding:5px 10px;font:600 11.5px var(--body)}
+.alert button:focus-visible{outline:2px solid #fff;outline-offset:1px}
+.pop .alert-body{white-space:pre-wrap;font-size:13px;line-height:1.5;margin:10px 0 0}
 .foot{font-size:11px;color:var(--muted);text-align:center;margin-top:12px}
 </style>
 </head>
@@ -102,11 +101,11 @@ select{width:100%;padding:12px;font-weight:600;border-radius:10px;border:1px sol
 <div class="phone">
   <div class="status"><span id="clock">10:48</span><span>LTE ▮▮▮ 82%</span></div>
   <div class="toast" id="toast" hidden></div>
-  <div class="alerts" id="alerts" role="region" aria-live="polite" aria-label="Weather alerts"></div>
   <header>
     <div class="brand">Lake<span>Lens</span></div>
     <div class="acts" id="acts"></div>
   </header>
+  <div class="alerts" id="alerts" role="region" aria-live="polite" aria-label="Weather alerts"></div>
   <main id="main"></main>
   <nav class="tabs" id="tabs" hidden></nav><!-- Report / Before you go / About hidden for now -->
   <div class="scrim" id="scrim" hidden><div class="pop" id="pop" role="dialog" aria-modal="true" aria-label="How the score is calculated"></div></div>
@@ -125,20 +124,20 @@ const LEVELS=[[25,"Good","--good"],[50,"Use caution","--caution"],[75,"High risk
 
 // ---------- sample live readings (example data, not real) ----------
 const ALL_LAKES=[
- {id:"lew",name:"Lewisville",lat:33.07,lon:-97.0,wind:16,gust:22,hi:98,sat:"low",rain:0,ecoli:false,wt:76,lvl:.4,day:"weekend",ltg:null,warn:false,official:null},
- {id:"grp",name:"Grapevine",lat:32.97,lon:-97.08,wind:21,gust:28,hi:96,sat:"low",rain:.1,ecoli:false,wt:75,lvl:-1.2,day:"weekend",ltg:null,warn:false,official:null},
- {id:"rr",name:"Ray Roberts",lat:33.37,lon:-97.05,wind:9,gust:14,hi:94,sat:"low",rain:0,ecoli:false,wt:75,lvl:-.6,day:"weekend",ltg:null,warn:false,official:null},
+ {id:"lew",stn:"KDTO",name:"Lewisville",lat:33.07,lon:-97.0,wind:16,gust:22,hi:98,sat:"low",rain:0,ecoli:false,wt:76,lvl:.4,day:"weekend",ltg:null,warn:false,official:null},
+ {id:"grp",stn:"KDFW",name:"Grapevine",lat:32.97,lon:-97.08,wind:21,gust:28,hi:96,sat:"low",rain:.1,ecoli:false,wt:75,lvl:-1.2,day:"weekend",ltg:null,warn:false,official:null},
+ {id:"rr",stn:"KDTO",name:"Ray Roberts",lat:33.37,lon:-97.05,wind:9,gust:14,hi:94,sat:"low",rain:0,ecoli:false,wt:75,lvl:-.6,day:"weekend",ltg:null,warn:false,official:null},
  {id:"lav",name:"Lavon",lat:33.05,lon:-96.48,wind:12,gust:18,hi:97,sat:"medium",rain:.6,ecoli:true,wt:77,lvl:-5.8,day:"weekend",ltg:null,warn:false,official:null},
  {id:"jp",name:"Joe Pool",lat:32.62,lon:-97.0,wind:14,gust:20,hi:99,sat:"low",rain:1.2,ecoli:true,wt:77,lvl:.2,day:"weekend",ltg:null,warn:false,official:null},
  {id:"ben",name:"Benbrook",lat:32.63,lon:-97.45,wind:7,gust:11,hi:95,sat:"low",rain:0,ecoli:false,wt:76,lvl:-2.1,day:"weekend",ltg:null,warn:false,official:null},
- {id:"tex",name:"Texoma",lat:33.82,lon:-96.6,wind:18,gust:26,hi:93,sat:"high",rain:0,ecoli:false,wt:74,lvl:1.1,day:"weekend",ltg:null,warn:false,official:"advisory"},
+ {id:"tex",stn:"KGYI",name:"Texoma",lat:33.82,lon:-96.6,wind:18,gust:26,hi:93,sat:"high",rain:0,ecoli:false,wt:74,lvl:1.1,day:"weekend",ltg:null,warn:false,official:"advisory"},
  {id:"rh",name:"Ray Hubbard",lat:32.85,lon:-96.52,wind:11,gust:16,hi:98,sat:"medium",rain:.3,ecoli:false,wt:77,lvl:-.9,day:"weekend",ltg:null,warn:false,official:null},
  {id:"em",name:"Eagle Mountain",lat:32.9,lon:-97.47,wind:10,gust:15,hi:96,sat:"low",rain:0,ecoli:false,wt:76,lvl:-3.4,day:"weekend",ltg:null,warn:false,official:null},
  {id:"lw",name:"Lake Worth",lat:32.8,lon:-97.42,wind:8,gust:12,hi:97,sat:"low",rain:0,ecoli:true,wt:77,lvl:.1,day:"weekend",ltg:18,warn:false,official:null}];
 const LAKES=ALL_LAKES.filter(L=>["rr","lew","grp","tex"].includes(L.id));
 const AGE={storms:1,wind:4,heat:4,algae:1140,bacteria:12,cold:15,level:15,crowd:9}; // minutes
 let reports=[]; // {lake, algae, water, crowd, sign, t}
-let LIVE={ltg:null,alerts:{}}; // ltg: lakelens-data/processed/*.json; alerts: NWS, by lake id
+let LIVE={ltg:null,alerts:{},obs:{}}; // ltg: lakelens-data/processed/*.json; alerts + obs: NWS, by lake id
 
 // ---------- scoring ----------
 function hazards(L){
@@ -228,11 +227,18 @@ function viewLake(){
    </div>
    <div class="card"><h3>Community reports (last 2 h)</h3>${rep.length?rep.map(x=>`<div class="note">• algae ${x.algae}, water ${x.water}, crowd ${x.crowd} · ${ago(Math.max(0,Math.round((Date.now()-x.t)/60000)))}</div>`).join("")+(rep.length<2?'<p class="note">Unconfirmed: needs a second matching report to change the score.</p>':""):'<p class="note">No reports yet.</p>'}</div>
    <div class="demo"><button id="storm">⚡ Replay storm at Grapevine</button><button id="reset">Reset demo</button></div>
-   <p class="foot">Example readings for the prototype. Always wear a life jacket. Follow posted signs and official advisories.</p>`;
+   <p class="foot">${liveNote(L)} Always wear a life jacket. Follow posted signs and official advisories.</p>`;
+}
+function liveNote(L){
+  const live=[];
+  if(LIVE.ltg)live.push(`lightning (NOAA GOES-19, ${ago(AGE.storms)}${AGE.storms>75?", out of date":""})`);
+  if(LIVE.obs[L.id])live.push(`wind and heat (NWS ${L.stn}, ${ago(Math.max(0,Math.round((Date.now()-LIVE.obs[L.id].t)/60000)))})`);
+  live.push("NWS alerts");
+  return `Live: ${live.join(", ")}. Other readings are examples.`;
 }
 function viewHow(){
   const L=LAKES.find(x=>x.id===sel)||LAKES[0], r=score(L,act), ai=WACTS.indexOf(act), top3=r.wtd.slice(0,3);
-  return `<div class="pop-head"><h3>How the score is calculated</h3><button class="x" id="howClose" aria-label="Close">✕</button></div>
+  return `<div class="pop-head"><h3>How the score is calculated</h3><button class="x" id="popClose" aria-label="Close">✕</button></div>
    <p class="note" style="margin:0 0 10px">${act} at ${L.name}</p>
    <div class="ai" style="margin-top:0">${r.override?"Override: "+(r.h.storms===100?(L.warn?`NWS ${L.warn}`:"lightning within 10 mi"):"official algae warning")+" → 100":`0.7 × max + 0.3 × mean(top 3)
 = 0.7 × ${top3[0].v.toFixed(1)} + 0.3 × ${((top3[0].v+top3[1].v+top3[2].v)/3).toFixed(1)}
@@ -240,8 +246,10 @@ function viewHow(){
    <div style="margin-top:12px">${COMPS.map(k=>{const v=Math.round(W[k][ai]*r.h[k]);const c=r.h[k]>=75?"--stay":r.h[k]>=50?"--high":r.h[k]>=25?"--caution":"--good";return `<div class="comp"><span>${LABEL[k]}</span><span class="bar"><i style="width:${r.h[k]}%;background:${col(c)}"></i></span><span class="v">${v}</span><span class="sub">hazard ${r.h[k]} × weight ${W[k][ai]} · updated ${ago(AGE[k])}</span></div>`}).join("")}</div>
    <p class="note" style="margin-bottom:0">Satellite algae is provisional EPA data; bacteria is an estimate from recent rain.</p>`;
 }
-function openHow(){$("pop").innerHTML=viewHow();$("scrim").hidden=false;$("howClose").focus()}
-function closeHow(){if($("scrim").hidden)return;$("scrim").hidden=true;$("how")?.focus()}
+let popReturn=null; // returns the element to refocus on close (it may have been re-rendered meanwhile)
+function openPop(html,label,ret){$("pop").innerHTML=html;$("pop").setAttribute("aria-label",label);popReturn=ret;$("scrim").hidden=false;$("popClose").focus()}
+function closePop(){if($("scrim").hidden)return;$("scrim").hidden=true;popReturn?.()?.focus()}
+function openHow(){openPop(viewHow(),"How the score is calculated",()=>$("how"))}
 // fake "photos" drawn on canvas
 const SHOTS=[
  {k:"algae",label:"Green scum near shore",out:{algae:"likely",water:"calm",crowd:"empty",sign:"none",confidence:.91},paint:(g,w,h)=>{g.fillStyle="#5e8f3a";g.fillRect(0,0,w,h);for(let i=0;i<60;i++){g.fillStyle=`rgba(${120+Math.random()*60},${180+Math.random()*50},60,.6)`;g.beginPath();g.arc(Math.random()*w,Math.random()*h,4+Math.random()*10,0,7);g.fill()}}},
@@ -302,8 +310,8 @@ $("main").onclick=e=>{
   if(t.closest("#reset")){LAKES.find(x=>x.id==="grp").ltg=null;applyLightning();reports=[];lastLabel=null;render();return}
 };
 $("main").onchange=e=>{if(e.target.id==="glake"||e.target.id==="hlake"){sel=e.target.value;render()}};
-$("scrim").onclick=e=>{if(e.target.id==="scrim"||e.target.closest("#howClose"))closeHow()};
-document.addEventListener("keydown",e=>{if(e.key==="Escape")closeHow()});
+$("scrim").onclick=e=>{if(e.target.id==="scrim"||e.target.closest("#popClose"))closePop()};
+document.addEventListener("keydown",e=>{if(e.key==="Escape")closePop()});
 function toast(h){const el=$("toast");el.innerHTML=h;el.hidden=false;clearTimeout(toast.t);toast.t=setTimeout(()=>el.hidden=true,4500)}
 setInterval(()=>{const d=new Date();$("clock").textContent=d.toLocaleTimeString([], {hour:"numeric",minute:"2-digit"})},10000);
 // ---------- live data ----------
@@ -313,36 +321,63 @@ function applyLightning(){
   ALL_LAKES.forEach(L=>{const x=d.lakes[L.id]; if(x)L.ltg=x.nearest_mi});
   AGE.storms=Math.max(0,Math.round((Date.now()-Date.parse(d.generated))/60000));
 }
-// NWS alerts: active Severe/Extreme alerts at each lake's point, from api.weather.gov (CORS-enabled, no key).
-// Shown as dismissible pop-ups on the selected lake; dismissals are remembered per lake + alert id.
-const CRITICAL=["Extreme","Severe"];
+// NWS alerts: active Severe/Extreme alerts (plus Air Quality Alerts) at each lake's point, from api.weather.gov (CORS-enabled, no key).
+// Shown as small boxes above the selected lake; they stay until NWS ends the alert.
+const CRITICAL=["Extreme","Severe"], ALSO_SHOW=["Air Quality Alert"];
 const esc=t=>String(t??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
-let dismissed=new Set();
-try{dismissed=new Set(JSON.parse(localStorage.getItem("lakelens.dismissed")||"[]"))}catch(e){}
-function saveDismissed(){try{localStorage.setItem("lakelens.dismissed",JSON.stringify([...dismissed].slice(-200)))}catch(e){}}
 function loadAlerts(){
   LAKES.forEach(L=>fetch(`https://api.weather.gov/alerts/active?point=${L.lat},${L.lon}`)
     .then(r=>r.ok?r.json():Promise.reject(r.status))
-    .then(d=>{const list=d.features.map(f=>f.properties).filter(p=>CRITICAL.includes(p.severity))
-      .sort((a,b)=>CRITICAL.indexOf(a.severity)-CRITICAL.indexOf(b.severity));
+    .then(d=>{const list=d.features.map(f=>f.properties).filter(p=>CRITICAL.includes(p.severity)||ALSO_SHOW.includes(p.event));
       LIVE.alerts[L.id]=list;
-      // Any active critical Warning overrides the score, even after its pop-up is dismissed
-      const warn=list.find(a=>/Warning$/.test(a.event))?.event||false;
+      // Any active critical Warning overrides the score
+      const warn=list.find(a=>CRITICAL.includes(a.severity)&&/Warning$/.test(a.event))?.event||false;
       if(warn!==L.warn){L.warn=warn;render()}else renderAlerts()})
     .catch(e=>console.warn(`NWS alerts unavailable for ${L.name}:`,e)));
 }
 function renderAlerts(){
   const L=LAKES.find(x=>x.id===sel)||LAKES[0];
-  const list=tab==="map"?(LIVE.alerts[L.id]||[]).filter(a=>!dismissed.has(`${L.id}|${a.id}`)):[];
+  const list=tab==="map"?(LIVE.alerts[L.id]||[]):[];
   const until=a=>{const t=a.ends||a.expires;return t?`Until ${new Date(t).toLocaleString([],{weekday:"short",hour:"numeric",minute:"2-digit"})}`:""};
-  $("alerts").innerHTML=list.map(a=>`<div class="alert${a.severity==="Severe"?" severe":""}" role="alert">
-    <button class="ax" data-ax="${esc(L.id+"|"+a.id)}" aria-label="Dismiss ${esc(a.event)}">✕</button>
-    <b>${esc(L.name)}: ${esc(a.event)}</b>${esc(a.headline)}
-    <small>${until(a)} · ${esc(a.senderName)}</small>
-    <details><summary>Details</summary><p>${esc([a.description,a.instruction].filter(Boolean).join("\n\n"))}</p></details></div>`).join("");
+  $("alerts").innerHTML=list.map(a=>{const k=esc(L.id+"|"+a.id);return `<div class="alert">
+    <span class="at"><b>⚠ ${esc(a.event)}</b> <small>${until(a)}</small></span>
+    <button class="ad" data-ad="${k}">Details</button></div>`}).join("");
 }
-$("alerts").onclick=e=>{const b=e.target.closest("[data-ax]");if(b){dismissed.add(b.dataset.ax);saveDismissed();renderAlerts()}};
+function viewAlert(a,L){
+  const until=a.ends||a.expires;
+  return `<div class="pop-head"><h3>${esc(a.event)}</h3><button class="x" id="popClose" aria-label="Close">✕</button></div>
+   <p class="note" style="margin:0">${esc(L.name)} · ${esc(a.senderName)}${until?` · until ${new Date(until).toLocaleString([],{weekday:"short",hour:"numeric",minute:"2-digit"})}`:""}</p>
+   <p style="margin:10px 0 0;font-size:14px;font-weight:600;line-height:1.4">${esc(a.headline)}</p>
+   <p class="alert-body">${esc([a.description,a.instruction].filter(Boolean).join("\n\n"))}</p>`;
+}
+$("alerts").onclick=e=>{
+  const d=e.target.closest("[data-ad]");
+  if(d){const [lid,id]=d.dataset.ad.split(/\|(.*)/),L=LAKES.find(x=>x.id===lid),a=(LIVE.alerts[lid]||[]).find(x=>x.id===id);
+    if(a)openPop(viewAlert(a,L),a.event,()=>document.querySelector(`[data-ad="${CSS.escape(d.dataset.ad)}"]`))}};
 loadAlerts(); setInterval(loadAlerts,5*60e3);
+
+// Wind, gusts, heat index: latest NWS surface observation at the airport station nearest each lake (L.stn).
+// Fields can be null in a single report, so take each from the newest report that has it.
+const KMH_MPH=0.621371, C_F=c=>c*9/5+32;
+function loadObs(){
+  LAKES.forEach(L=>fetch(`https://api.weather.gov/stations/${L.stn}/observations?limit=6`)
+    .then(r=>r.ok?r.json():Promise.reject(r.status))
+    .then(d=>{
+      const obs=d.features.map(f=>f.properties), pick=k=>obs.find(o=>o[k]?.value!=null);
+      const w=pick("windSpeed"), t=pick("heatIndex")||pick("temperature"); if(!w||!t)return;
+      const g=obs.find(o=>o.timestamp===w.timestamp)?.windGust?.value;
+      const before=[L.wind,L.gust,L.hi].join();
+      L.wind=Math.round(w.windSpeed.value*KMH_MPH);
+      L.gust=g!=null?Math.round(g*KMH_MPH):L.wind; // no gust reported = steady wind
+      L.hi=Math.round(C_F((t.heatIndex?.value??t.temperature.value)));
+      LIVE.obs[L.id]={stn:L.stn,t:Date.parse(w.timestamp)};
+      const ages=Object.values(LIVE.obs).map(o=>Math.round((Date.now()-o.t)/60000));
+      AGE.wind=AGE.heat=Math.max(0,...ages); // oldest station, so the label never overstates freshness
+      if([L.wind,L.gust,L.hi].join()!==before)render(); // skip re-render (which scrolls to top) when nothing changed
+    })
+    .catch(e=>console.warn(`NWS observations unavailable for ${L.name} (${L.stn}):`,e)));
+}
+loadObs(); setInterval(loadObs,10*60e3);
 fetch("lakelens-data/processed/lightning.json",{cache:"no-store"})
   .then(r=>r.ok?r.json():Promise.reject(r.status))
   .then(d=>{LIVE.ltg=d;applyLightning();render()})
