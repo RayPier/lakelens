@@ -1,0 +1,40 @@
+name: Update algae data
+
+# Refreshes lakelens-data/processed/algae.json from EPA CyAN once a day.
+# CyAN images are weekly composites, so more often would only repeat the same numbers.
+# The grid of water points (cyan_points.json) is built once with `fetch_algae.py --discover`.
+on:
+  schedule:
+    - cron: "23 11 * * *"  # 11:23 UTC = 6:23 AM CDT, before people head to the lake
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: update-algae
+  cancel-in-progress: false
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      # Standard library only; no pip install needed
+      - run: python lakelens-data/scripts/fetch_algae.py
+
+      - name: Commit updated data
+        run: |
+          git config user.name "lakelens-bot"
+          git config user.email "lakelens-bot@users.noreply.github.com"
+          git add lakelens-data/processed/algae.json
+          git diff --cached --quiet && exit 0
+          git commit -m "Update algae data $(date -u +%Y-%m-%d)"
+          git pull --rebase origin main
+          git push
