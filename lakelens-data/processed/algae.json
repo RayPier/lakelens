@@ -1,6 +1,6 @@
 {
   "source": "EPA CyAN weekly cyanobacteria (Sentinel-3 OLCI, 300 m), area-weighted lake average",
-  "generated": "2026-10-07T17:51:32+00:00",
+  "generated": "2026-10-08T17:54:52+00:00",
   "thresholds_cells_ml": {
     "low_below": 20000,
     "high_above": 100000
