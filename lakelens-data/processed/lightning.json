@@ -1,86 +1,86 @@
 {
   "source": "NOAA GOES-19 GLM GLM-L2-LCFA (s3://noaa-goes19)",
-  "generated": "2026-10-14T17:00:42+00:00",
+  "generated": "2026-10-14T20:33:03+00:00",
   "window_min": 30,
   "files": 89,
-  "latest_file_start": "2026-10-14T17:00:00+00:00",
+  "latest_file_start": "2026-10-14T20:32:20+00:00",
   "lakes": {
     "lew": {
       "name": "Lewisville",
-      "nearest_mi": 108.9,
-      "nearest_min_ago": 12.3,
+      "nearest_mi": 87.4,
+      "nearest_min_ago": 1.4,
       "last_within_10mi_min_ago": null,
       "count_10mi": 0,
       "count_20mi": 0
     },
     "grp": {
       "name": "Grapevine",
-      "nearest_mi": 116.4,
-      "nearest_min_ago": 27.8,
+      "nearest_mi": 85.4,
+      "nearest_min_ago": 1.4,
       "last_within_10mi_min_ago": null,
       "count_10mi": 0,
       "count_20mi": 0
     },
     "rr": {
       "name": "Ray Roberts",
-      "nearest_mi": 88.9,
-      "nearest_min_ago": 27.8,
+      "nearest_mi": 101.7,
+      "nearest_min_ago": 29.7,
       "last_within_10mi_min_ago": null,
       "count_10mi": 0,
       "count_20mi": 0
     },
     "lav": {
       "name": "Lavon",
-      "nearest_mi": 105.6,
-      "nearest_min_ago": 12.3,
+      "nearest_mi": 62.0,
+      "nearest_min_ago": 29.7,
       "last_within_10mi_min_ago": null,
       "count_10mi": 0,
       "count_20mi": 0
     },
     "jp": {
       "name": "Joe Pool",
-      "nearest_mi": 138.9,
-      "nearest_min_ago": 12.3,
+      "nearest_mi": 66.4,
+      "nearest_min_ago": 1.4,
       "last_within_10mi_min_ago": null,
       "count_10mi": 0,
       "count_20mi": 0
     },
     "ben": {
       "name": "Benbrook",
-      "nearest_mi": 136.5,
-      "nearest_min_ago": 20.3,
+      "nearest_mi": 88.9,
+      "nearest_min_ago": 9.1,
       "last_within_10mi_min_ago": null,
       "count_10mi": 0,
       "count_20mi": 0
     },
     "tex": {
       "name": "Texoma",
-      "nearest_mi": 53.1,
-      "nearest_min_ago": 12.3,
+      "nearest_mi": 104.5,
+      "nearest_min_ago": 29.7,
       "last_within_10mi_min_ago": null,
       "count_10mi": 0,
       "count_20mi": 0
     },
     "rh": {
       "name": "Ray Hubbard",
-      "nearest_mi": 119.5,
-      "nearest_min_ago": 12.3,
+      "nearest_mi": 58.2,
+      "nearest_min_ago": 29.7,
       "last_within_10mi_min_ago": null,
       "count_10mi": 0,
       "count_20mi": 0
     },
     "em": {
       "name": "Eagle Mountain",
-      "nearest_mi": 118.0,
-      "nearest_min_ago": 18.3,
+      "nearest_mi": 99.8,
+      "nearest_min_ago": 1.4,
       "last_within_10mi_min_ago": null,
       "count_10mi": 0,
       "count_20mi": 0
     },
     "lw": {
       "name": "Lake Worth",
-      "nearest_mi": 125.2,
-      "nearest_min_ago": 18.3,
+      "nearest_mi": 93.7,
+      "nearest_min_ago": 1.4,
       "last_within_10mi_min_ago": null,
       "count_10mi": 0,
       "count_20mi": 0
