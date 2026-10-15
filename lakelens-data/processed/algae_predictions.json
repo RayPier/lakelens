@@ -1,0 +1,46 @@
+{
+  "generated_at": "2026-10-15T22:02:39.302073+00:00",
+  "description": "Experimental prediction of elevated satellite-derived cyanobacteria indicator at the next weekly observation. Not a toxin measurement or swimming safety determination.",
+  "lakes": {
+    "lew": {
+      "name": "Lewisville",
+      "status": "experimental",
+      "last_observation": "2026-10-10",
+      "forecast_date": "2026-10-17",
+      "probability_elevated": 0.972,
+      "predicted_elevated": true,
+      "indicator": "next_7d_detected_mean_above_100k",
+      "model": "RF with weather"
+    },
+    "grp": {
+      "name": "Grapevine",
+      "status": "experimental",
+      "last_observation": "2026-10-10",
+      "forecast_date": "2026-10-17",
+      "probability_elevated": 0.595,
+      "predicted_elevated": true,
+      "indicator": "next_7d_detected_mean_above_100k",
+      "model": "RF with weather"
+    },
+    "rr": {
+      "name": "Ray Roberts",
+      "status": "experimental",
+      "last_observation": "2026-10-10",
+      "forecast_date": "2026-10-17",
+      "probability_elevated": 0.469,
+      "predicted_elevated": false,
+      "indicator": "next_7d_detected_mean_above_100k",
+      "model": "RF with weather"
+    },
+    "tex": {
+      "name": "Texoma",
+      "status": "experimental",
+      "last_observation": "2026-10-10",
+      "forecast_date": "2026-10-17",
+      "probability_elevated": 0.633,
+      "predicted_elevated": true,
+      "indicator": "next_7d_detected_mean_above_100k",
+      "model": "RF with weather"
+    }
+  }
+}
