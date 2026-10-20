@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-10-19T18:58:44.018586+00:00",
+  "generated_at": "2026-10-20T17:27:26.803546+00:00",
   "description": "Experimental prediction of elevated satellite-derived cyanobacteria indicator at the next weekly observation. Not a toxin measurement or swimming safety determination.",
   "lakes": {
     "lew": {
@@ -17,7 +17,7 @@
       "status": "experimental",
       "last_observation": "2026-10-10",
       "forecast_date": "2026-10-17",
-      "probability_elevated": 0.603,
+      "probability_elevated": 0.595,
       "predicted_elevated": true,
       "indicator": "next_7d_detected_mean_above_100k",
       "model": "RF with weather"
