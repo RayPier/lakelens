@@ -26,3 +26,14 @@ create policy "anyone can add a rating" on public.ratings
 create policy "anyone can read the last day" on public.ratings
   for select to anon
   using (created_at > now() - interval '1 day');
+
+-- Cleanup: the page only uses the last 2 hours and the public key can't read past a day,
+-- so delete anything older than a day. Runs at the top of every hour (pg_cron, built into Supabase).
+-- Re-running this replaces the job of the same name. Check it with: select * from cron.job;
+create extension if not exists pg_cron;
+
+select cron.schedule(
+  'delete-old-ratings',
+  '0 * * * *',
+  $$delete from public.ratings where created_at < now() - interval '1 day'$$
+);

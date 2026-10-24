@@ -92,7 +92,7 @@ select{width:100%;padding:12px;font-weight:600;border-radius:10px;border:1px sol
 .pop .alert-body{white-space:pre-wrap;font-size:13px;line-height:1.5;margin:10px 0 0}
 .rate{padding:12px 0;border-bottom:1px solid var(--line)}
 .rate:last-of-type{border-bottom:0}
-.rate-h{font-weight:600;font-size:14px}
+.rate-h{font-weight:600;font-size:17px}
 .stars{display:flex;gap:2px;margin-top:6px;align-items:center}
 .stars button{background:none;border:0;font-size:30px;line-height:1;color:var(--line);cursor:pointer;padding:0 2px}
 .stars button.on{color:var(--caution)}
@@ -310,7 +310,7 @@ function viewLake(){
      <button class="how" id="how">How is the score calculated?</button>
    </div>
    ${viewAlgaeForecast(L)}
-   <div class="card"><h3>Visitor ratings (last 3 h)</h3>${RATE_FIELDS.map(f=>{const v=L.vis?.[f.k];return `<div class="vr"><span>${f.label}</span>${v?`<span><span class="st" aria-hidden="true">${starText(v.avg)}</span> ${v.avg.toFixed(1)}</span><small>${v.n} rating${v.n>1?"s":""}, latest ${ago(minsAgo(v.t))} · ${f.lo} → ${f.hi}</small>`:`<span class="note">No ratings yet</span>`}</div>`}).join("")}
+   <div class="card"><h3>Visitor ratings (last 2 h)</h3>${RATE_FIELDS.map(f=>{const v=L.vis?.[f.k];return `<div class="vr"><span>${f.label}</span>${v?`<span><span class="st" aria-hidden="true">${starText(v.avg)}</span> ${v.avg.toFixed(1)}</span><small>${v.n} rating${v.n>1?"s":""}, latest ${ago(minsAgo(v.t))} · ${f.lo} → ${f.hi}</small>`:`<span class="note">No ratings yet</span>`}</div>`}).join("")}
      <button class="link" id="goRate">Rate conditions →</button></div>
    <div class="demo"><button id="storm">⚡ Replay storm at Grapevine</button><button id="reset">Reset demo</button></div>
    <p class="foot">${liveNote(L)} Always wear a life jacket. Follow posted signs and official advisories.</p>`;
@@ -348,15 +348,13 @@ function viewReport(){
   const L=LAKES.find(x=>x.id===sel)||LAKES[0], wait=rateWait(L.id), any=RATE_FIELDS.some(f=>draft[f.k]!=null);
   return `<div class="card"><h3>Rate conditions</h3>
    <select id="rlake" aria-label="Lake">${LAKES.map(x=>`<option value="${x.id}" ${x.id===L.id?"selected":""}>${x.name} Lake</option>`).join("")}</select>
-   <p class="note" style="margin-top:0">Rate what you see right now. Skip anything you can't judge. Ratings from the last 3 hours show for everyone.</p>
    ${RATE_FIELDS.map(f=>`<div class="rate" role="group" aria-label="${f.label}"><div class="rate-h">${f.label}</div>
      <div class="stars"><button class="zero${draft[f.k]===0?" on":""}" data-rate="${f.k}" data-v="0" aria-pressed="${draft[f.k]===0}">0</button>${[1,2,3,4,5].map(n=>`<button class="${draft[f.k]>=n?"on":""}" data-rate="${f.k}" data-v="${n}" aria-label="${n} star${n>1?"s":""}" aria-pressed="${draft[f.k]===n}">★</button>`).join("")}</div>
      <div class="hint"><span>0 = ${f.lo}</span><span>5 = ${f.hi}</span></div></div>`).join("")}
    <button class="btn" id="sendRate" ${!any||wait||sending?"disabled":""}>${sending?"Sending…":"Submit rating"}</button>
    ${wait?`<p class="note">You rated ${L.name} recently. You can rate it again in ${wait} min.</p>`:""}
    ${rateMsg?`<p class="note" role="status">${rateMsg}</p>`:""}
-   </div>
-   <p class="note">${SUPABASE.url?"Ratings are anonymous.":"Ratings are only saved on this device until the shared database is connected."} Crowding and water roughness count toward the score; cleanliness is shown but doesn't change it.</p>`;
+   </div>`;
 }
 function viewGo(){
   const L=LAKES.find(x=>x.id===(sel||"lew")), r=score(L,act), h=r.h;
@@ -524,7 +522,7 @@ const RATE_FIELDS=[
  {k:"crowding",label:"Crowding",lo:"empty",hi:"packed"},
  {k:"roughness",label:"Water roughness",lo:"glassy calm",hi:"whitecaps"},
  {k:"cleanliness",label:"Cleanliness",lo:"lots of trash",hi:"spotless"}];
-const RATE_WINDOW=3*3600e3, RATE_GAP=30*60e3; // ratings count for 3 h; one per lake per device per 30 min
+const RATE_WINDOW=2*3600e3, RATE_GAP=30*60e3; // ratings count for 2 h; one per lake per device per 30 min
 const starText=a=>"★".repeat(Math.round(a))+"☆".repeat(5-Math.round(a));
 let draft={}, sending=false, rateMsg="";
 const store={get:(k,d)=>{try{return JSON.parse(localStorage.getItem(k))??d}catch(e){return d}},set:(k,v)=>{try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}};
@@ -548,8 +546,8 @@ function applyRatings(rows){
     RATE_FIELDS.forEach(({k})=>{const v=mine.filter(r=>r[k]!=null);
       if(v.length)L.vis[k]={avg:v.reduce((a,r)=>a+r[k],0)/v.length,n:v.length,t:Math.max(...v.map(r=>Date.parse(r.created_at)))}});
     const c=L.vis.crowding, w=L.vis.roughness;
-    L.src.crowd=c?{name:`${c.n} visitor rating${c.n>1?"s":""}, avg ${c.avg.toFixed(1)}/5`,t:c.t}:{missing:"no visitor ratings in the last 3 hours"};
-    L.src.roughness=w?{name:`visitors: ${w.avg.toFixed(1)}/5 rough (${w.n})`,t:w.t}:{note:"no visitor roughness ratings in the last 3 h"};
+    L.src.crowd=c?{name:`${c.n} visitor rating${c.n>1?"s":""}, avg ${c.avg.toFixed(1)}/5`,t:c.t}:{missing:"no visitor ratings in the last 2 hours"};
+    L.src.roughness=w?{name:`visitors: ${w.avg.toFixed(1)}/5 rough (${w.n})`,t:w.t}:{note:"no visitor roughness ratings in the last 2 h"};
   });
 }
 function loadRatings(){
