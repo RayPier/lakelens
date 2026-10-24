@@ -69,8 +69,6 @@ select{width:100%;padding:12px;font-weight:600;border-radius:10px;border:1px sol
 .check input{margin-top:3px;accent-color:var(--accent)}
 .toast{position:absolute;left:14px;right:14px;top:48px;background:var(--stay);color:#fff;border-radius:14px;padding:12px 14px;font-size:13px;box-shadow:0 10px 30px rgba(0,0,0,.25);transition:transform .3s;z-index:5}
 .toast b{display:block;font-size:14px}
-.demo{display:flex;gap:6px;flex-wrap:wrap;margin-top:10px}
-.demo button{flex:1;border:1px dashed var(--line);background:transparent;color:var(--muted);border-radius:10px;padding:8px;font:500 12px var(--body);cursor:pointer}
 .tabs[hidden]{display:none}
 .how{background:none;border:0;color:var(--accent);font:500 12.5px var(--body);text-decoration:underline;text-underline-offset:3px;cursor:pointer;margin-top:8px;padding:4px}
 .scrim{position:absolute;inset:0;background:rgba(5,15,14,.45);z-index:6;display:flex;align-items:flex-end}
@@ -223,7 +221,6 @@ function viewMap(){
     <text x="300" y="232" font-size="10" fill="var(--muted)">Dallas</text><text x="62" y="232" font-size="10" fill="var(--muted)">Fort Worth</text>
     ${pins}</svg></div>
     <div class="list">${rows.map(({L,r})=>`<button class="row" data-l="${L.id}"><span class="dot" style="background:${col(r.lvl[2])}"></span><span><div class="nm">${L.name}</div><div class="why">${r.lvl[1]} · ${LABEL[r.top]}</div></span><span class="sc">${r.s}</span></button>`).join("")}</div>
-    <div class="demo"><button id="storm">⚡ Replay storm at Grapevine</button><button id="reset">Reset demo</button></div>
     <p class="foot">${LIVE.ltg?`Lightning: NOAA GOES-19, updated ${ago(AGE.storms)}${AGE.storms>75?" (out of date; check the sky and local alerts)":""}. Other readings are examples.`:"Example readings for the prototype."} Always wear a life jacket. Follow posted signs and official advisories.</p>`;
 }
 function ring(r){
@@ -248,9 +245,7 @@ function viewLake(){
      <button class="how" id="how">How is the score calculated?</button>
    </div>
    <div class="card"><h3>Visitor ratings (last 2 h)</h3>${RATE_FIELDS.map(f=>{const v=L.vis?.[f.k];return `<div class="vr"><span>${f.label}</span>${v?`<span><span class="st" aria-hidden="true">${starText(v.avg)}</span> ${v.avg.toFixed(1)}</span><small>${v.n} rating${v.n>1?"s":""}, latest ${ago(minsAgo(v.t))} · ${f.lo} → ${f.hi}</small>`:`<span class="note">No ratings yet</span>`}</div>`}).join("")}
-     <button class="link" id="goRate">Rate conditions →</button></div>
-   <div class="demo"><button id="storm">⚡ Replay storm at Grapevine</button><button id="reset">Reset demo</button></div>
-   <p class="foot">${liveNote(L)} Always wear a life jacket. Follow posted signs and official advisories.</p>`;
+     <button class="link" id="goRate">Rate conditions →</button></div>`;
 }
 const minsAgo=t=>Math.max(0,Math.round((Date.now()-t)/60000));
 const PART_LABEL={storms:"lightning",wind:"wind",heat:"heat",algae:"satellite algae",cold:"water temperature",crowd:"crowding",roughness:"water roughness",level:"water level",rain:"rain",ecoli:"E. coli history"};
@@ -262,10 +257,6 @@ function srcNote(L,k){
       :x.loading?`${PART_LABEL[p]}: loading…`
       :x.note?esc(x.note)
       :`${esc(x.name)}${x.t?`, ${ago(minsAgo(x.t))}`:""}`}).join(" · ");
-}
-function liveNote(L){
-  const live=LIVE_PARTS.filter(p=>L.src?.[p]?.name).map(p=>p==="crowd"?"visitor ratings":PART_LABEL[p]), miss=LIVE_PARTS.filter(p=>L.src?.[p]?.missing).map(p=>PART_LABEL[p]);
-  return `Live: ${[...live,"NWS alerts"].join(", ")}${L.src?.storms?.name&&AGE.storms>75?" (lightning out of date)":""}.${miss.length?` Not available: ${miss.join(", ")}.`:""}`;
 }
 function viewHow(){
   const L=LAKES.find(x=>x.id===sel)||LAKES[0], r=score(L,act), ai=WACTS.indexOf(act), top3=r.wtd.slice(0,3);
@@ -324,8 +315,6 @@ $("main").onclick=e=>{
   if(t.closest("#goRate")){tab="report";rateMsg="";render();return}
   const st=t.closest("[data-rate]"); if(st){const k=st.dataset.rate,v=+st.dataset.v;draft[k]=draft[k]===v?null:v;refresh();return} // tap again to clear
   if(t.closest("#sendRate")){sendRating();return}
-  if(t.closest("#storm")){const G=LAKES.find(x=>x.id==="grp");G.ltg=8;AGE.storms=0;sel="grp";render();toast(`<b>Grapevine: Stay out of the water</b>Lightning 8 mi away just now. Get off the water.`);return}
-  if(t.closest("#reset")){LAKES.find(x=>x.id==="grp").ltg=null;applyLightning();render();return}
 };
 $("main").onchange=e=>{if(["glake","hlake","rlake"].includes(e.target.id)){sel=e.target.value;if(e.target.id==="rlake")rateMsg="";render()}};
 $("scrim").onclick=e=>{if(e.target.id==="scrim"||e.target.closest("#popClose"))closePop()};
@@ -346,11 +335,18 @@ function applyLightning(){
 // Shown as small boxes above the selected lake; they stay until NWS ends the alert.
 const CRITICAL=["Extreme","Severe"], ALSO_SHOW=["Air Quality Alert"];
 const esc=t=>String(t??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+// Sample alert so the alert box can be seen without a live one. Clearly marked "Sample"; it never changes the score.
+const SAMPLE_AQ={id:"sample-aq",sample:true,event:"Air Quality Alert",severity:"Moderate",senderName:"NWS Fort Worth TX",
+ ends:(()=>{const d=new Date();d.setHours(23,59,0,0);return d.toISOString()})(),
+ headline:"Ozone Action Day for the Dallas-Fort Worth area",
+ description:"The Texas Commission on Environmental Quality (TCEQ) has issued an Ozone Action Day for the Dallas-Fort Worth area. Atmospheric conditions are expected to be favorable for producing high levels of ozone air pollution. You can help prevent ozone pollution by sharing a ride, walking, riding a bicycle, taking your lunch to work, avoiding drive-through lanes, conserving energy and keeping your vehicle properly tuned.",
+ instruction:"Children, older adults and people with heart or lung disease should limit prolonged or heavy exertion outdoors, especially in the afternoon."};
+LAKES.forEach(L=>LIVE.alerts[L.id]=[SAMPLE_AQ]);
 function loadAlerts(){
   LAKES.forEach(L=>fetch(`https://api.weather.gov/alerts/active?point=${L.lat},${L.lon}`)
     .then(r=>r.ok?r.json():Promise.reject(r.status))
     .then(d=>{const list=d.features.map(f=>f.properties).filter(p=>CRITICAL.includes(p.severity)||ALSO_SHOW.includes(p.event));
-      LIVE.alerts[L.id]=list;
+      LIVE.alerts[L.id]=[...list,SAMPLE_AQ];
       // Any active critical Warning overrides the score
       const warn=list.find(a=>CRITICAL.includes(a.severity)&&/Warning$/.test(a.event))?.event||false;
       if(warn!==L.warn){L.warn=warn;refresh()}else renderAlerts()})
@@ -361,15 +357,15 @@ function renderAlerts(){
   const list=tab==="map"?(LIVE.alerts[L.id]||[]):[];
   const until=a=>{const t=a.ends||a.expires;return t?`Until ${new Date(t).toLocaleString([],{weekday:"short",hour:"numeric",minute:"2-digit"})}`:""};
   $("alerts").innerHTML=list.map(a=>{const k=esc(L.id+"|"+a.id);return `<div class="alert">
-    <span class="at"><b>⚠ ${esc(a.event)}</b> <small>${until(a)}</small></span>
+    <span class="at"><b>⚠ ${a.sample?"Sample: ":""}${esc(a.event)}</b> <small>${until(a)}</small></span>
     <button class="ad" data-ad="${k}">Details</button></div>`}).join("");
 }
 function viewAlert(a,L){
   const until=a.ends||a.expires;
-  return `<div class="pop-head"><h3>${esc(a.event)}</h3><button class="x" id="popClose" aria-label="Close">✕</button></div>
+  return `<div class="pop-head"><h3>${a.sample?"Sample: ":""}${esc(a.event)}</h3><button class="x" id="popClose" aria-label="Close">✕</button></div>
    <p class="note" style="margin:0">${esc(L.name)} · ${esc(a.senderName)}${until?` · until ${new Date(until).toLocaleString([],{weekday:"short",hour:"numeric",minute:"2-digit"})}`:""}</p>
    <p style="margin:10px 0 0;font-size:14px;font-weight:600;line-height:1.4">${esc(a.headline)}</p>
-   <p class="alert-body">${esc([a.description,a.instruction].filter(Boolean).join("\n\n"))}</p>`;
+   <p class="alert-body">${esc([a.description,a.instruction].filter(Boolean).join("\n\n"))}</p>${a.sample?`<p class="note">This is a sample alert to show how alerts look. It is not a real NWS alert.</p>`:""}`;
 }
 $("alerts").onclick=e=>{
   const d=e.target.closest("[data-ad]");
