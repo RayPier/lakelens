@@ -1,46 +1,34 @@
 {
-  "generated_at": "2026-10-24T16:11:54.807989+00:00",
+  "generated_at": "2026-10-25T02:30:27.739774+00:00",
   "description": "Experimental prediction of elevated satellite-derived cyanobacteria indicator at the next weekly observation. Not a toxin measurement or swimming safety determination.",
   "lakes": {
     "lew": {
       "name": "Lewisville",
-      "status": "experimental",
+      "status": "stale",
       "last_observation": "2026-10-10",
-      "forecast_date": "2026-10-17",
-      "probability_elevated": 0.972,
-      "predicted_elevated": true,
-      "indicator": "next_7d_detected_mean_above_100k",
-      "model": "RF with weather"
+      "age_days": 15,
+      "reason": "Latest usable satellite data is over 14 days old"
     },
     "grp": {
       "name": "Grapevine",
-      "status": "experimental",
+      "status": "stale",
       "last_observation": "2026-10-10",
-      "forecast_date": "2026-10-17",
-      "probability_elevated": 0.59,
-      "predicted_elevated": true,
-      "indicator": "next_7d_detected_mean_above_100k",
-      "model": "RF with weather"
+      "age_days": 15,
+      "reason": "Latest usable satellite data is over 14 days old"
     },
     "rr": {
       "name": "Ray Roberts",
-      "status": "experimental",
+      "status": "stale",
       "last_observation": "2026-10-10",
-      "forecast_date": "2026-10-17",
-      "probability_elevated": 0.469,
-      "predicted_elevated": false,
-      "indicator": "next_7d_detected_mean_above_100k",
-      "model": "RF with weather"
+      "age_days": 15,
+      "reason": "Latest usable satellite data is over 14 days old"
     },
     "tex": {
       "name": "Texoma",
-      "status": "experimental",
+      "status": "stale",
       "last_observation": "2026-10-10",
-      "forecast_date": "2026-10-17",
-      "probability_elevated": 0.633,
-      "predicted_elevated": true,
-      "indicator": "next_7d_detected_mean_above_100k",
-      "model": "RF with weather"
+      "age_days": 15,
+      "reason": "Latest usable satellite data is over 14 days old"
     }
   }
 }
