@@ -31,12 +31,41 @@ jobs:
         working-directory: lakelens-data
         run: python -u scripts/refresh_algae_ml.py
 
+
       - name: Commit refreshed data
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
           git add lakelens-data/processed/
-          if ! git diff --cached --quiet; then
-            git commit -m "Refresh algae forecast data"
-            git push
+
+          if git diff --cached --quiet; then
+            echo "No changes to commit"
+            exit 0
           fi
+
+          git commit -m "Refresh algae forecast data"
+
+          for attempt in 1 2 3 4 5; do
+            echo "Push attempt $attempt"
+
+            git fetch origin main
+
+            if ! git rebase origin/main; then
+              echo "Rebase conflict; aborting to protect data"
+              git rebase --abort
+              exit 1
+            fi
+
+            if git push origin HEAD:main; then
+              echo "Successfully pushed refreshed data"
+              exit 0
+            fi
+
+            echo "Remote changed; retrying..."
+            sleep 5
+          done
+
+          echo "Failed to push after 5 attempts"
+          exit 1
+
