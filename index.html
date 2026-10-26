@@ -103,6 +103,19 @@ select{width:100%;padding:12px;font-weight:600;border-radius:10px;border:1px sol
 .vr small{grid-column:1/-1;color:var(--muted);font-size:11.5px}
 .link{background:none;border:0;color:var(--accent);font:600 13px var(--body);padding:6px 0 0;cursor:pointer}
 .foot{font-size:11px;color:var(--muted);text-align:center;margin-top:12px}
+.algae-heading{display:flex;justify-content:space-between;align-items:center;gap:8px}
+.algae-heading h3{margin:0}
+.algae-badge{background:var(--accent);flex-shrink:0}
+.algae-subtitle{margin:7px 0 12px}
+.algae-result{display:flex;align-items:center;gap:10px;padding:11px;border-radius:12px;background:var(--bg)}
+.algae-result strong{display:block;font-size:15px;line-height:1.3}
+.algae-result .note{margin-top:4px}
+.algae-symbol{font-size:23px;line-height:1}
+.algae-elevated strong,.algae-elevated .algae-symbol{color:var(--high)}
+.algae-lower strong,.algae-lower .algae-symbol{color:var(--good)}
+.algae-dates{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:14px 0}
+.algae-dates strong{display:block;font-size:12px;margin-top:3px}
+.algae-disclaimer{border-top:1px solid var(--line);padding-top:10px;margin:0}
 </style>
 </head>
 <body>
@@ -158,6 +171,19 @@ const LIVE_PARTS=["storms","wind","heat","algae","level","rain","ecoli","cold","
 LAKES.forEach(L=>{Object.assign(L,{wind:null,gust:null,hi:null,sat:null,official:null,lvl:null,rain:null,ecoli:null,wt:null,vis:{}});L.src={};LIVE_PARTS.forEach(k=>L.src[k]={loading:true})});
 const AGE={storms:1}; // minutes since the lightning file was generated
 let LIVE={ltg:null,alerts:{}}; // ltg: lakelens-data/processed/*.json; alerts: NWS, by lake id
+let ALGAE_ML = { status: "loading", lakes: {} };
+async function loadAlgaePredictions() {
+  try {
+    const response = await fetch("lakelens-data/processed/algae_predictions.json", { cache: "no-store" });
+    if (!response.ok) throw new Error(`HTTP ${response.status}`);
+    const data = await response.json();
+    ALGAE_ML = { status: "loaded", lakes: data.lakes || {} };
+  } catch (error) {
+    console.warn("ML algae predictions unavailable:", error);
+    ALGAE_ML = { status: "unavailable", lakes: {} };
+  }
+  refresh();
+}
 
 // ---------- scoring ----------
 function hazards(L){
@@ -234,6 +260,42 @@ function ring(r){
     <text x="80" y="108" text-anchor="middle" font-size="11" fill="var(--muted)">out of 100</text>
   </svg>`;
 }
+function viewAlgaeForecast(L) {
+  const heading = `<div class="algae-heading"><h3>AI Algae Outlook</h3><span class="pill algae-badge">Experimental</span></div>`;
+  const p = ALGAE_ML.lakes[L.id];
+  if (ALGAE_ML.status === "loading") {
+    return `<div class="card algae-card">${heading}<p class="note">Loading forecast…</p></div>`;
+  }
+  if (!p || p.status !== "experimental") {
+    return `<div class="card algae-card">${heading}<p class="note">Forecast unavailable. Check current observations and official advisories.</p></div>`;
+  }
+  const observation = new Date(p.last_observation + "T12:00:00Z");
+  const target = new Date(p.forecast_date + "T12:00:00Z");
+  const ageDays = (Date.now() - observation.getTime()) / 86400000;
+  if (!Number.isFinite(ageDays) || ageDays < 0 || ageDays > 14 ||
+      !Number.isFinite(target.getTime()) || Date.now() > target.getTime() + 86400000) {
+    return `<div class="card algae-card">${heading}<p class="note">Forecast expired or satellite observations are too old. Check official advisories.</p></div>`;
+  }
+  const elevated = p.predicted_elevated === true;
+  const statusText = elevated ? "Higher algae levels expected" : "Lower algae levels expected";
+  const statusClass = elevated ? "algae-elevated" : "algae-lower";
+  const formatDate = d => d.toLocaleDateString("en-US", {month:"short",day:"numeric",year:"numeric",timeZone:"UTC"});
+  const score = Number(p.probability_elevated);
+  const scoreText = Number.isFinite(score) ? score.toFixed(3) : "Unavailable";
+  return `<div class="card algae-card">
+    ${heading}
+    <p class="note algae-subtitle">7-day satellite-based forecast</p>
+    <div class="algae-result ${statusClass}">
+      <span class="algae-symbol" aria-hidden="true">${elevated ? "⚠" : "◉"}</span>
+      <div><strong>${statusText}</strong><div class="note">Model score: ${scoreText}</div></div>
+    </div>
+    <div class="algae-dates">
+      <div><span class="note">Forecast date</span><strong>${formatDate(target)}</strong></div>
+      <div><span class="note">Last satellite image</span><strong>${formatDate(observation)}</strong></div>
+    </div>
+    <p class="note algae-disclaimer">Experimental prediction of satellite-detected cyanobacteria levels, not a toxin test or a swimming safety assessment. The model score is not a calibrated probability. Follow official advisories.</p>
+  </div>`;
+}
 function viewLake(){
   const L=LAKES.find(x=>x.id===sel)||LAKES[0], r=score(L,act);
   return `<select id="hlake" aria-label="Lake">${LAKES.map(x=>`<option value="${x.id}" ${x.id===L.id?"selected":""}>${x.name} Lake</option>`).join("")}</select>
@@ -244,6 +306,7 @@ function viewLake(){
      <p class="note" style="margin:6px 0 0">${act} at ${L.name}${r.override?" · override applied":""}</p>
      <button class="how" id="how">How is the score calculated?</button>
    </div>
+   ${viewAlgaeForecast(L)}
    <div class="card"><h3>Visitor ratings (last 2 h)</h3>${RATE_FIELDS.map(f=>{const v=L.vis?.[f.k];return `<div class="vr"><span>${f.label}</span>${v?`<span><span class="st" aria-hidden="true">${starText(v.avg)}</span> ${v.avg.toFixed(1)}</span><small>${v.n} rating${v.n>1?"s":""}, latest ${ago(minsAgo(v.t))} · ${f.lo} → ${f.hi}</small>`:`<span class="note">No ratings yet</span>`}</div>`}).join("")}
      <button class="link" id="goRate">Rate conditions →</button></div>`;
 }
@@ -526,6 +589,7 @@ fetch("lakelens-data/processed/lightning.json",{cache:"no-store"})
   .then(r=>r.ok?r.json():Promise.reject(r.status))
   .then(d=>{LIVE.ltg=d;applyLightning();refresh()})
   .catch(e=>{console.warn("Lightning data unavailable:",e);LAKES.forEach(L=>L.src.storms={missing:"couldn't load the lightning file"});refresh()});
+loadAlgaePredictions();
 render();
 </script>
 </body>
