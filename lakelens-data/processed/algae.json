@@ -1,6 +1,6 @@
 {
   "source": "EPA CyAN weekly cyanobacteria (Sentinel-3 OLCI, 300 m), area-weighted lake average",
-  "generated": "2026-10-25T14:58:59+00:00",
+  "generated": "2026-10-26T17:27:44+00:00",
   "thresholds_cells_ml": {
     "low_below": 20000,
     "high_above": 100000
@@ -9,19 +9,19 @@
     "lew": {
       "name": "Lewisville",
       "category": "high",
-      "mean_cells_ml": 102080,
-      "max_cells_ml": 1106624,
-      "image_date": "2026-10-24",
+      "mean_cells_ml": 140099,
+      "max_cells_ml": 1235948,
+      "image_date": "2026-10-25",
       "points": 73,
       "area_km2": 76,
-      "detected_area_pct": 30
+      "detected_area_pct": 29
     },
     "grp": {
       "name": "Grapevine",
-      "category": "low",
-      "mean_cells_ml": 3651,
-      "max_cells_ml": 55976,
-      "image_date": "2026-10-24",
+      "category": "medium",
+      "mean_cells_ml": 23744,
+      "max_cells_ml": 366438,
+      "image_date": "2026-10-25",
       "points": 20,
       "area_km2": 21,
       "detected_area_pct": 10
@@ -29,22 +29,22 @@
     "rr": {
       "name": "Ray Roberts",
       "category": "medium",
-      "mean_cells_ml": 60512,
-      "max_cells_ml": 469894,
-      "image_date": "2026-10-24",
+      "mean_cells_ml": 34339,
+      "max_cells_ml": 731139,
+      "image_date": "2026-10-25",
       "points": 70,
       "area_km2": 72,
-      "detected_area_pct": 50
+      "detected_area_pct": 7
     },
     "tex": {
       "name": "Texoma",
-      "category": "low",
-      "mean_cells_ml": 6831,
-      "max_cells_ml": 263027,
-      "image_date": "2026-10-20",
+      "category": "medium",
+      "mean_cells_ml": 26385,
+      "max_cells_ml": 619441,
+      "image_date": "2026-10-24",
       "points": 73,
       "area_km2": 300,
-      "detected_area_pct": 3
+      "detected_area_pct": 10
     }
   }
 }
