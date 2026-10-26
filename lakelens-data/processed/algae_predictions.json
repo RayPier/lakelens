@@ -1,34 +1,46 @@
 {
-  "generated_at": "2026-10-25T02:30:27.739774+00:00",
+  "generated_at": "2026-10-26T02:09:13.327369+00:00",
   "description": "Experimental prediction of elevated satellite-derived cyanobacteria indicator at the next weekly observation. Not a toxin measurement or swimming safety determination.",
   "lakes": {
     "lew": {
       "name": "Lewisville",
-      "status": "stale",
-      "last_observation": "2026-10-10",
-      "age_days": 15,
-      "reason": "Latest usable satellite data is over 14 days old"
+      "status": "experimental",
+      "last_observation": "2026-10-24",
+      "forecast_date": "2026-10-31",
+      "probability_elevated": 0.96,
+      "predicted_elevated": true,
+      "indicator": "next_7d_detected_mean_above_100k",
+      "model": "RF with weather"
     },
     "grp": {
       "name": "Grapevine",
-      "status": "stale",
-      "last_observation": "2026-10-10",
-      "age_days": 15,
-      "reason": "Latest usable satellite data is over 14 days old"
+      "status": "experimental",
+      "last_observation": "2026-10-24",
+      "forecast_date": "2026-10-31",
+      "probability_elevated": 0.763,
+      "predicted_elevated": true,
+      "indicator": "next_7d_detected_mean_above_100k",
+      "model": "RF with weather"
     },
     "rr": {
       "name": "Ray Roberts",
-      "status": "stale",
-      "last_observation": "2026-10-10",
-      "age_days": 15,
-      "reason": "Latest usable satellite data is over 14 days old"
+      "status": "experimental",
+      "last_observation": "2026-10-24",
+      "forecast_date": "2026-10-31",
+      "probability_elevated": 0.639,
+      "predicted_elevated": true,
+      "indicator": "next_7d_detected_mean_above_100k",
+      "model": "RF with weather"
     },
     "tex": {
       "name": "Texoma",
-      "status": "stale",
-      "last_observation": "2026-10-10",
-      "age_days": 15,
-      "reason": "Latest usable satellite data is over 14 days old"
+      "status": "experimental",
+      "last_observation": "2026-10-24",
+      "forecast_date": "2026-10-31",
+      "probability_elevated": 0.934,
+      "predicted_elevated": true,
+      "indicator": "next_7d_detected_mean_above_100k",
+      "model": "RF with weather"
     }
   }
 }
