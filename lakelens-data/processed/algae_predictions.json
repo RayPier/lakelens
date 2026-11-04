@@ -1,13 +1,13 @@
 {
-  "generated_at": "2026-10-26T02:09:13.327369+00:00",
+  "generated_at": "2026-11-04T20:01:08.382075+00:00",
   "description": "Experimental prediction of elevated satellite-derived cyanobacteria indicator at the next weekly observation. Not a toxin measurement or swimming safety determination.",
   "lakes": {
     "lew": {
       "name": "Lewisville",
       "status": "experimental",
-      "last_observation": "2026-10-24",
-      "forecast_date": "2026-10-31",
-      "probability_elevated": 0.96,
+      "last_observation": "2026-10-31",
+      "forecast_date": "2026-11-07",
+      "probability_elevated": 0.985,
       "predicted_elevated": true,
       "indicator": "next_7d_detected_mean_above_100k",
       "model": "RF with weather"
@@ -15,9 +15,9 @@
     "grp": {
       "name": "Grapevine",
       "status": "experimental",
-      "last_observation": "2026-10-24",
-      "forecast_date": "2026-10-31",
-      "probability_elevated": 0.763,
+      "last_observation": "2026-10-31",
+      "forecast_date": "2026-11-07",
+      "probability_elevated": 0.653,
       "predicted_elevated": true,
       "indicator": "next_7d_detected_mean_above_100k",
       "model": "RF with weather"
@@ -25,9 +25,9 @@
     "rr": {
       "name": "Ray Roberts",
       "status": "experimental",
-      "last_observation": "2026-10-24",
-      "forecast_date": "2026-10-31",
-      "probability_elevated": 0.639,
+      "last_observation": "2026-10-31",
+      "forecast_date": "2026-11-07",
+      "probability_elevated": 0.573,
       "predicted_elevated": true,
       "indicator": "next_7d_detected_mean_above_100k",
       "model": "RF with weather"
@@ -35,9 +35,9 @@
     "tex": {
       "name": "Texoma",
       "status": "experimental",
-      "last_observation": "2026-10-24",
-      "forecast_date": "2026-10-31",
-      "probability_elevated": 0.934,
+      "last_observation": "2026-10-31",
+      "forecast_date": "2026-11-07",
+      "probability_elevated": 0.951,
       "predicted_elevated": true,
       "indicator": "next_7d_detected_mean_above_100k",
       "model": "RF with weather"
