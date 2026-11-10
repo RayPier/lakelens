@@ -1,6 +1,6 @@
 {
   "source": "EPA CyAN weekly cyanobacteria (Sentinel-3 OLCI, 300 m), area-weighted lake average",
-  "generated": "2026-11-09T21:29:25+00:00",
+  "generated": "2026-11-10T18:43:08+00:00",
   "thresholds_cells_ml": {
     "low_below": 20000,
     "high_above": 100000
@@ -39,9 +39,9 @@
     "tex": {
       "name": "Texoma",
       "category": "low",
-      "mean_cells_ml": 4629,
-      "max_cells_ml": 337287,
-      "image_date": "2026-10-31",
+      "mean_cells_ml": 5754,
+      "max_cells_ml": 420727,
+      "image_date": "2026-11-09",
       "points": 73,
       "area_km2": 300,
       "detected_area_pct": 1
