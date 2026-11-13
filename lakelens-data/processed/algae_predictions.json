@@ -1,13 +1,13 @@
 {
-  "generated_at": "2026-11-07T17:56:53.516460+00:00",
+  "generated_at": "2026-11-13T20:00:07.806906+00:00",
   "description": "Experimental prediction of elevated satellite-derived cyanobacteria indicator at the next weekly observation. Not a toxin measurement or swimming safety determination.",
   "lakes": {
     "lew": {
       "name": "Lewisville",
       "status": "experimental",
-      "last_observation": "2026-10-31",
-      "forecast_date": "2026-11-07",
-      "probability_elevated": 0.985,
+      "last_observation": "2026-11-07",
+      "forecast_date": "2026-11-14",
+      "probability_elevated": 0.976,
       "predicted_elevated": true,
       "indicator": "next_7d_detected_mean_above_100k",
       "model": "RF with weather"
@@ -15,9 +15,9 @@
     "grp": {
       "name": "Grapevine",
       "status": "experimental",
-      "last_observation": "2026-10-31",
-      "forecast_date": "2026-11-07",
-      "probability_elevated": 0.653,
+      "last_observation": "2026-11-07",
+      "forecast_date": "2026-11-14",
+      "probability_elevated": 0.842,
       "predicted_elevated": true,
       "indicator": "next_7d_detected_mean_above_100k",
       "model": "RF with weather"
@@ -25,22 +25,19 @@
     "rr": {
       "name": "Ray Roberts",
       "status": "experimental",
-      "last_observation": "2026-10-31",
-      "forecast_date": "2026-11-07",
-      "probability_elevated": 0.576,
-      "predicted_elevated": true,
+      "last_observation": "2026-11-07",
+      "forecast_date": "2026-11-14",
+      "probability_elevated": 0.496,
+      "predicted_elevated": false,
       "indicator": "next_7d_detected_mean_above_100k",
       "model": "RF with weather"
     },
     "tex": {
       "name": "Texoma",
-      "status": "experimental",
-      "last_observation": "2026-10-31",
-      "forecast_date": "2026-11-07",
-      "probability_elevated": 0.951,
-      "predicted_elevated": true,
-      "indicator": "next_7d_detected_mean_above_100k",
-      "model": "RF with weather"
+      "status": "stale",
+      "last_observation": "2026-10-24",
+      "age_days": 20,
+      "reason": "Latest usable satellite data is over 14 days old"
     }
   }
 }
