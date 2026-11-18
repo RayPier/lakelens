@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-11-16T22:35:34.177779+00:00",
+  "generated_at": "2026-11-18T20:55:42.192982+00:00",
   "description": "Experimental prediction of elevated satellite-derived cyanobacteria indicator at the next weekly observation. Not a toxin measurement or swimming safety determination.",
   "lakes": {
     "lew": {
@@ -36,7 +36,7 @@
       "name": "Texoma",
       "status": "stale",
       "last_observation": "2026-10-31",
-      "age_days": 16,
+      "age_days": 18,
       "reason": "Latest usable satellite data is over 14 days old"
     }
   }
