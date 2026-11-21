@@ -1,9 +1,9 @@
 {
   "source": "NOAA GOES-19 GLM GLM-L2-LCFA (s3://noaa-goes19)",
-  "generated": "2026-11-20T19:56:59+00:00",
+  "generated": "2026-11-21T01:19:16+00:00",
   "window_min": 30,
   "files": 90,
-  "latest_file_start": "2026-11-20T19:56:20+00:00",
+  "latest_file_start": "2026-11-21T01:18:40+00:00",
   "lakes": {
     "lew": {
       "name": "Lewisville",
