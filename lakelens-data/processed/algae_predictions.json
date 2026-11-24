@@ -1,13 +1,13 @@
 {
-  "generated_at": "2026-11-21T19:39:09.602236+00:00",
+  "generated_at": "2026-11-24T00:19:43.576177+00:00",
   "description": "Experimental prediction of elevated satellite-derived cyanobacteria indicator at the next weekly observation. Not a toxin measurement or swimming safety determination.",
   "lakes": {
     "lew": {
       "name": "Lewisville",
       "status": "experimental",
-      "last_observation": "2026-11-14",
-      "forecast_date": "2026-11-21",
-      "probability_elevated": 0.951,
+      "last_observation": "2026-11-21",
+      "forecast_date": "2026-11-28",
+      "probability_elevated": 0.882,
       "predicted_elevated": true,
       "indicator": "next_7d_detected_mean_above_100k",
       "model": "RF with weather"
@@ -15,10 +15,10 @@
     "grp": {
       "name": "Grapevine",
       "status": "experimental",
-      "last_observation": "2026-11-14",
-      "forecast_date": "2026-11-21",
-      "probability_elevated": 0.899,
-      "predicted_elevated": true,
+      "last_observation": "2026-11-21",
+      "forecast_date": "2026-11-28",
+      "probability_elevated": 0.338,
+      "predicted_elevated": false,
       "indicator": "next_7d_detected_mean_above_100k",
       "model": "RF with weather"
     },
@@ -35,9 +35,9 @@
     "tex": {
       "name": "Texoma",
       "status": "experimental",
-      "last_observation": "2026-11-14",
-      "forecast_date": "2026-11-21",
-      "probability_elevated": 0.86,
+      "last_observation": "2026-11-21",
+      "forecast_date": "2026-11-28",
+      "probability_elevated": 0.774,
       "predicted_elevated": true,
       "indicator": "next_7d_detected_mean_above_100k",
       "model": "RF with weather"
